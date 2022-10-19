@@ -59,9 +59,9 @@ int procesadoC(char* Arg[], int numA,tList* L){
         }else if(strcmp(Arg[0],"list")==0){
             list(Arg, numA);
         }else if(strcmp(Arg[0],"delete")==0){
-            //
+            delete(Arg, numA);
         }else if(strcmp(Arg[0],"deltree")==0){
-            //
+            deltree(Arg, numA);
         }else if(strcmp(Arg[0],"fin")==0 || strcmp(Arg[0],"bye")==0 || strcmp(Arg[0],"salir")==0){
             if(numA<2){
                 return 1;
@@ -443,6 +443,71 @@ void listrec(char* Arg, bool reca, bool recb, bool hid, bool lon, bool link, boo
 	free(concat);
 }
 //
+
+void delete(char *Arg[], int numA){
+	bool aux;
+    struct stat stats;
+    char p[PATH_MAX];
+	char format;
+    DIR *dir;
+    struct dirent *dirname;
+	
+	if(numA>1) for(int i=1; i<numA; i++){
+
+		aux=1;
+		if(lstat(Arg[i], &stats) == -1) perror("error");
+		else{
+			format=LetraTF(stats.st_mode);
+			if(format=='d'){ // path es un directorio
+        		if((dir = opendir(Arg[i])) == NULL) perror("error");
+				else{
+					while((dirname = readdir(dir)) != NULL) {
+            			if(strcmp(dirname->d_name, ".") != 0 && strcmp(dirname->d_name, "..") != 0) aux=0;
+					}if(closedir(dir)==-1) perror("error");
+					if(aux && rmdir(Arg[i]) == -1) perror("error");
+        		}
+			}else if(remove(Arg[i])==-1)perror("error");
+			
+    	}
+
+	}else if(getcwd(p, sizeof(p))==NULL) {perror("error");}else printf("%s\n",p);
+}
+
+void deltree(char *Arg[], int numA){
+    struct stat stats;
+    char p[PATH_MAX];
+	char format;
+    DIR *dir;
+    struct dirent *dirname;
+	char* recpath[2];
+	bool aux;
+
+	if(numA>1) for(int i=1; i<numA; i++){
+		printf("%s\n", Arg[1]);
+		aux=1;
+		if(lstat(Arg[i], &stats)==-1)perror("error");
+		else{
+			format=LetraTF(stats.st_mode);
+			if(format=='d'){
+				if((dir = opendir(Arg[i])) == NULL) perror("error");
+				else{
+					recpath[1]= malloc(PATH_MAX);
+					while((dirname = readdir(dir)) != NULL) {
+            			if(strcmp(dirname->d_name, ".") != 0 && strcmp(dirname->d_name, "..") != 0){
+							strcpy(recpath[1], Arg[i]);
+							if(strcmp(Arg[i], "/")!=0) strcat(recpath[1], "/");
+							strcat(recpath[1], dirname->d_name);
+							deltree(recpath, 2);
+							aux=0;
+						}
+					}if(closedir(dir)==-1) perror("error");
+					if(aux && rmdir(Arg[i]) == -1) perror("error1");
+					free(recpath[1]);
+        		}
+			}else if(remove(Arg[i])==-1)perror("error");
+		}
+	}else if(getcwd(p, sizeof(p))==NULL) {perror("error");}else printf("%s\n",p);
+}
 
 //FUNCIONES DE LA LISTA
 bool createNode(tPosL *P){

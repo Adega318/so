@@ -54,7 +54,7 @@ void statfun(char* Arg[], int numA);
 	char * ConvierteModo (mode_t m);
 void list();
 	void listrec(char* Arg, bool reca, bool recb, bool hid, bool lon, bool link, bool acc);
-void delete();
+void delete(char *Arg[], int numA);
 void deltree();
 
 
