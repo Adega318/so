@@ -1,4 +1,3 @@
-
 #include "funcion.h"
 
 //Troceado de la cadena
