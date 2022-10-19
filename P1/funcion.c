@@ -252,9 +252,9 @@ void ayuda(char* Arg[], int numA){
     }else if(strcmp(Arg[1],"list")==0){
         printf("list [-reca] [-recb] [-hid][-long][-link][-acc] n1 n2 ..\tlista contenidos de directorios.\n\t-hid: incluye los ficheros ocultos\n\t-reca: recursivo(antes)\n\t-recb: recursivo (despues)\n\tparametros del stat\n");
     }else if(strcmp(Arg[1],"delete")==0){
-        printf("infosis\tda la imformación del sistema.\n");
+        printf("delete name1 name2 ..\tborra ficheros o directorios vacios.\n");
     }else if(strcmp(Arg[1],"deletetee")==0){
-        printf("infosis\tda la imformación del sistema.\n");
+        printf("deltree name1 name2 ..\tborra ficheros o directorios no vacios recursivamente.\n");
     }else {
     	printf("error: argumento incorrecto\n");
     }
