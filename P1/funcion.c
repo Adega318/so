@@ -12,48 +12,25 @@ int trocear(char *entrada, char* salida[]){
 int procesadoC(char* Arg[], int numA,tList* L){
     if(numA>0){
         if(strcmp(Arg[0],"autores")==0){
-            if(numA<=2){
-                autores(Arg, numA);
-            }else printf("error: exceso de argumentos\n");
-
+            autores(Arg, numA);
         }else if(strcmp(Arg[0],"pid")==0){
-            if(numA<=2){
-                pid(Arg, numA);
-            }else printf("error: exceso de argumentos\n");
-
+            pid(Arg, numA);
         }else if(strcmp(Arg[0],"carpeta")==0){
-            if(numA<=2){
-                carpeta(Arg, numA);
-            }else printf("error: exceso de argumentos\n");
+            carpeta(Arg, numA);
         }else if(strcmp(Arg[0],"fecha")==0){
-            if(numA<=2){
-                fecha(Arg, numA);
-            }else printf("error: exceso de argumentos\n");
-
+			fecha(Arg, numA);
         }else if(strcmp(Arg[0],"hist")==0){
-            if(numA<=2){
-                hist(Arg, numA, L);
-            }else printf("error: exceso de argumentos\n");
-
+            hist(Arg, numA, L);
         }else if(strcmp(Arg[0],"comando")==0){
-            if(numA==2){
-                comando(Arg, numA, L);
-            }else if(numA==1){
-                printf("error: introduce una N\n");
-            }else printf("error: exceso de argumentos\n");
-
+			if(numA==1){
+				hist(Arg, 1, L);
+			}else comando(Arg, numA, L);
         }else if(strcmp(Arg[0],"infosis")==0){
-            if(numA<2){
-                infosis(Arg, numA);
-            }else printf("error: exceso de argumentos\n");
-
+			infosis(Arg, 1);
         }else if(strcmp(Arg[0],"ayuda")==0){
-            if(numA<=2){
-                ayuda(Arg, numA);
-            }else printf("error: exceso de argumentos\n");
-
+			ayuda(Arg, numA);
         }else if(strcmp(Arg[0],"create")==0){
-            create(Arg, numA);
+            create(Arg, 2);
         }else if(strcmp(Arg[0],"stat")==0){
 			statfun(Arg, numA);
         }else if(strcmp(Arg[0],"list")==0){
@@ -63,10 +40,7 @@ int procesadoC(char* Arg[], int numA,tList* L){
         }else if(strcmp(Arg[0],"deltree")==0){
             deltree(Arg, numA);
         }else if(strcmp(Arg[0],"fin")==0 || strcmp(Arg[0],"bye")==0 || strcmp(Arg[0],"salir")==0){
-            if(numA<2){
-                return 1;
-            }else printf("error: exceso de argumentos\n");
-
+            return 1;
         }else printf("error: comando no reconozido\n");
     }
     
@@ -95,7 +69,6 @@ void autores(char* Arg[], int numA){
     }else if(strcmp(Arg[1],"-n")==0){
         n=1;
     }else{
-        printf("error: argumento incorrecto\n");
 		return;
     }
 
@@ -112,8 +85,6 @@ void pid(char* Arg[], int numA){
     if(numA==1){
     }else if(strcmp(Arg[1],"-p")==0){
         p=1;
-    }else{
-        printf("error: argumento incorrecto\n");
     }
 
     if(!p){
@@ -150,8 +121,6 @@ void fecha(char* Arg[], int numA){
             h=1;
         }else if(strcmp(Arg[1],"-d")==0){
             d=1;
-        }else {
-            printf("error: argumento incorrecto\n");
         }
 
         if(h){
@@ -176,7 +145,7 @@ void hist(char* Arg[], int numA, tList *L){
 			n=n*-1;
             if(n>0){
                 mostrarHistN(n, L);
-            }else printf("error: argumento incorrecto\n");
+            }
         }
     }
 }
@@ -256,7 +225,7 @@ void ayuda(char* Arg[], int numA){
     }else if(strcmp(Arg[1],"deletetee")==0){
         printf("deltree name1 name2 ..\tborra ficheros o directorios no vacios recursivamente.\n");
     }else {
-    	printf("error: argumento incorrecto\n");
+    	printf("%s comando no encontrado\n", Arg[1]);
     }
 }
 
@@ -281,7 +250,6 @@ void create(char* Arg[], int numA){
 	while (numA>1 && i<numA && *Arg[i]=='-'){
 		if(strcmp(Arg[i], "-f")==0) file=1;
         else{
-        	printf("error: argumento incorrecto");
             return;
     	}
 		i++;
@@ -315,10 +283,7 @@ void statfun(char* Arg[], int numA){
 		if(strcmp(Arg[i], "-long")==0) modArg.lon=1;
         else if(strcmp(Arg[i], "-link")==0) modArg.link=1;
         else if(strcmp(Arg[i], "-acc")==0) modArg.acc=1;
-        else{
-        	printf("error: argumento incorrecto");
-            return;
-    	}
+		else printf("error: %s no es un modificador valido\n", Arg[i]);
 		i++;
 	}
 
@@ -326,7 +291,6 @@ void statfun(char* Arg[], int numA){
 		for(i=i; i<numA; i++){
 			if (lstat(Arg[i], &stats)==0){
 				statprint(modArg, Arg[i], Arg[i], stats);
-				//1	nlink	ino	2	3	mode	size name
 			}else perror("error");
 		}
 	}else if(getcwd(p,sizeof(p))==NULL) {perror("error");}else printf("%s\n",p);
@@ -348,7 +312,7 @@ void statprint (struct modCom modArg, char* pArg,char* Arg, struct stat stats){
 	}
 	printf("%8d ", (int)stats.st_size);
 	printf("%s", pArg);
-	if(link && LetraTF(stats.st_mode)=='l'){
+	if(modArg.link && LetraTF(stats.st_mode)=='l'){
 		salida=malloc(PATH_MAX);
 		size= (int)readlink(Arg, salida, PATH_MAX);
 		if (size>=0){
@@ -407,10 +371,7 @@ void list(char* Arg[], int numA){
 		else if(strcmp(Arg[i], "-long")==0) modArg.lon=1;
         else if(strcmp(Arg[i], "-link")==0) modArg.link=1;
         else if(strcmp(Arg[i], "-acc")==0) modArg.acc=1;
-        else{
-        	printf("error: argumento incorrecto");
-            return;
-    	}
+		else printf("error: %s no es un modificador valido\n", Arg[i]);
 		i++;
 	}
 	if(modArg.reca && modArg.recb) modArg.reca=0;
