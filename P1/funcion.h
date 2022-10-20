@@ -19,8 +19,17 @@
 
 
 #define LNULL NULL
-#define TROCEO 50
-#define TMALLOC 4090
+#define TROCEO 50 //numero maximo de argumentos de entrada
+#define TMALLOC 4090 //tamaño maximo de entrada
+
+struct modCom{
+	bool reca;
+	bool recb;
+	bool hid;
+	bool lon;
+	bool link;
+	bool acc;
+};
 
 typedef struct tNode* tPosL;
 struct tNode{
@@ -47,13 +56,15 @@ void comando(char* Arg[], int numA, tList *L);
 void infosis(char* Arg[], int numA);
 void ayuda(char* Arg[], int numA);
 //p1
+struct modCom ModComCreate();
+struct modCom ModComSet(struct modCom modArg);
 void create(char* Arg[], int numA);
 void statfun(char* Arg[], int numA);
-	void statprint (bool lon, bool link, bool acc, char* pArg, char* Arg, struct stat stats);
+	void statprint (struct modCom modArg, char* pArg, char* Arg, struct stat stats);
 	char LetraTF (mode_t m);
 	char * ConvierteModo (mode_t m);
 void list();
-	void listrec(char* Arg, bool reca, bool recb, bool hid, bool lon, bool link, bool acc);
+	void listrec(char* Arg, struct modCom modArg);
 void delete(char *Arg[], int numA);
 void deltree();
 

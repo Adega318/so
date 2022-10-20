@@ -261,6 +261,17 @@ void ayuda(char* Arg[], int numA){
 }
 
 //p1
+struct modCom ModComCreate(){
+	struct modCom modArg;
+	modArg.reca=0, modArg.recb=0, modArg.hid=0, modArg.lon=0, modArg.link=0, modArg.acc=0;
+	return modArg;
+}
+
+struct modCom ModComSet(struct modCom modArg){
+	modArg.reca=0, modArg.recb=0, modArg.hid=0, modArg.lon=0, modArg.link=0, modArg.acc=0;
+	return modArg;
+}
+
 void create(char* Arg[], int numA){
 	int i=1;
 	bool file=0;
@@ -295,15 +306,15 @@ void create(char* Arg[], int numA){
 
 void statfun(char* Arg[], int numA){
 	int i=1;
-	bool lon=0, link=0, acc=0;
+	struct modCom modArg=ModComCreate();
 	struct stat stats;
 	char p[PATH_MAX];
 	
 	while (numA>1 && i<numA && *Arg[i]=='-')
 	{
-		if(strcmp(Arg[i], "-long")==0) lon=1;
-        else if(strcmp(Arg[i], "-link")==0) link=1;
-        else if(strcmp(Arg[i], "-acc")==0) acc=1;
+		if(strcmp(Arg[i], "-long")==0) modArg.lon=1;
+        else if(strcmp(Arg[i], "-link")==0) modArg.link=1;
+        else if(strcmp(Arg[i], "-acc")==0) modArg.acc=1;
         else{
         	printf("error: argumento incorrecto");
             return;
@@ -314,7 +325,7 @@ void statfun(char* Arg[], int numA){
 	if(i<numA){
 		for(i=i; i<numA; i++){
 			if (lstat(Arg[i], &stats)==0){
-				statprint(lon, link, acc, Arg[i], Arg[i], stats);
+				statprint(modArg, Arg[i], Arg[i], stats);
 				//1	nlink	ino	2	3	mode	size name
 			}else perror("error");
 		}
@@ -322,12 +333,12 @@ void statfun(char* Arg[], int numA){
 }
 
 //subfunción de statfun
-void statprint (bool lon, bool link, bool acc, char* pArg,char* Arg, struct stat stats){
+void statprint (struct modCom modArg, char* pArg,char* Arg, struct stat stats){
 	char* salida;
 	int size=0;
-	if(lon){
+	if(modArg.lon){
 		struct tm *time;
-		if(acc)time=gmtime(&stats.st_atim.tv_sec);
+		if(modArg.acc)time=gmtime(&stats.st_atim.tv_sec);
 		else time=gmtime(&stats.st_mtim.tv_sec);
 		printf("%d/%02d/%02d-%02d:%02d ", time->tm_year+1900, time->tm_mon+1, time->tm_mday, time->tm_hour+2, time->tm_min);
 		printf("%3d ", (int)stats.st_nlink);
@@ -386,44 +397,48 @@ char * ConvierteModo (mode_t m)
 
 void list(char* Arg[], int numA){
 	int i=1;
-	bool reca=0, recb=0, hid=0, lon=0, link=0, acc=0;
+	struct modCom modArg=ModComCreate();
 	char p[PATH_MAX];
 
 	while (numA>1 && i<numA && *Arg[i]=='-'){
-		if(strcmp(Arg[i], "-reca")==0) reca=1;
-		else if(strcmp(Arg[i], "-recb")==0) recb=1;
-		else if(strcmp(Arg[i], "-hid")==0) hid=1;
-		else if(strcmp(Arg[i], "-long")==0) lon=1;
-        else if(strcmp(Arg[i], "-link")==0) link=1;
-        else if(strcmp(Arg[i], "-acc")==0) acc=1;
+		if(strcmp(Arg[i], "-reca")==0) modArg.reca=1;
+		else if(strcmp(Arg[i], "-recb")==0) modArg.recb=1;
+		else if(strcmp(Arg[i], "-hid")==0) modArg.hid=1;
+		else if(strcmp(Arg[i], "-long")==0) modArg.lon=1;
+        else if(strcmp(Arg[i], "-link")==0) modArg.link=1;
+        else if(strcmp(Arg[i], "-acc")==0) modArg.acc=1;
         else{
         	printf("error: argumento incorrecto");
             return;
     	}
 		i++;
 	}
-	if(reca && recb) reca=0;
+	if(modArg.reca && modArg.recb) modArg.reca=0;
 
-	if(i<numA) for(i=i; i<numA; i++) listrec(Arg[i], reca, recb, hid, lon, link, acc);
+	if(i<numA) for(i=i; i<numA; i++) listrec(Arg[i], modArg);
 	else if(getcwd(p, sizeof(p))==NULL) {perror("error");}else printf("%s\n",p);
 }
 
 //subfunción de list
-void listrec(char* Arg, bool reca, bool recb, bool hid, bool lon, bool link, bool acc){
+void listrec(char* Arg, struct modCom modArg){
 	DIR* dp;
 	struct dirent *dirp;
 	struct stat stats;
 	char* concat= malloc(PATH_MAX);
 	char format;
+	struct modCom modArg2=modArg;
 
-	if(!reca && !recb) printf("************%s\n", Arg);
+	if(!modArg.reca && !modArg.recb) printf("************%s\n", Arg);
 	dp=opendir(Arg);
 	if(dp==NULL)perror("error");
 	else{
-		if (reca) listrec(Arg, 0, recb, hid, lon, link, acc);
+		if (modArg.reca){
+			modArg2.reca=0;
+			listrec(Arg, modArg2);
+		}
 
 		while ((dirp=readdir(dp))!=NULL){
-			if((strcmp(dirp->d_name, ".")!=0 && strcmp(dirp->d_name, "..")!=0) || hid){
+			if((strcmp(dirp->d_name, ".")!=0 && strcmp(dirp->d_name, "..")!=0) || modArg.hid){
 				strcpy(concat, Arg);
 				if(strcmp(Arg, "/")!=0) strcat(concat, "/");
 				strcat(concat, dirp->d_name);
@@ -431,14 +446,17 @@ void listrec(char* Arg, bool reca, bool recb, bool hid, bool lon, bool link, boo
 				if (lstat(concat, &stats)==0){
 					format=LetraTF(stats.st_mode);
 
-					if(!(reca || recb)) statprint(lon, link, acc, dirp->d_name, concat, stats);
-					else if(format=='d' && strcmp(dirp->d_name, ".")!=0 && strcmp(dirp->d_name, "..")!=0) listrec(concat, reca, recb, hid, lon, link, acc);
+					if(!(modArg.reca || modArg.recb)) statprint(modArg, dirp->d_name, concat, stats);
+					else if(format=='d' && strcmp(dirp->d_name, ".")!=0 && strcmp(dirp->d_name, "..")!=0) listrec(concat, modArg);
 
 				}else perror("error");
 			}
 		}if(closedir(dp)==-1) perror("error");
 
-		if (recb) listrec(Arg, reca, 0, hid, lon, link, acc);
+		if (modArg.recb){
+			modArg2.recb=0;
+			listrec(Arg, modArg2);
+		}
 	}
 	free(concat);
 }
@@ -448,7 +466,6 @@ void delete(char *Arg[], int numA){
 	bool aux;
     struct stat stats;
     char p[PATH_MAX];
-	char format;
     DIR *dir;
     struct dirent *dirname;
 	
@@ -457,8 +474,7 @@ void delete(char *Arg[], int numA){
 		aux=1;
 		if(lstat(Arg[i], &stats) == -1) perror("error");
 		else{
-			format=LetraTF(stats.st_mode);
-			if(format=='d'){
+			if(LetraTF(stats.st_mode)=='d'){
         		if((dir = opendir(Arg[i])) == NULL) perror("error");
 				else{
 					while((dirname = readdir(dir)) != NULL) {
@@ -476,7 +492,6 @@ void delete(char *Arg[], int numA){
 void deltree(char *Arg[], int numA){
     struct stat stats;
     char p[PATH_MAX];
-	char format;
     DIR *dir;
     struct dirent *dirname;
 	char* recpath[2];
@@ -484,8 +499,7 @@ void deltree(char *Arg[], int numA){
 	if(numA>1) for(int i=1; i<numA; i++){
 		if(lstat(Arg[i], &stats)==-1)perror("error");
 		else{
-			format=LetraTF(stats.st_mode);
-			if(format=='d'){
+			if(LetraTF(stats.st_mode)=='d'){
 				if((dir = opendir(Arg[i])) == NULL) perror("error");
 				else{
 					recpath[1]= malloc(PATH_MAX);
