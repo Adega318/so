@@ -458,7 +458,7 @@ void delete(char *Arg[], int numA){
 		if(lstat(Arg[i], &stats) == -1) perror("error");
 		else{
 			format=LetraTF(stats.st_mode);
-			if(format=='d'){ // path es un directorio
+			if(format=='d'){
         		if((dir = opendir(Arg[i])) == NULL) perror("error");
 				else{
 					while((dirname = readdir(dir)) != NULL) {
@@ -480,11 +480,8 @@ void deltree(char *Arg[], int numA){
     DIR *dir;
     struct dirent *dirname;
 	char* recpath[2];
-	bool aux;
 
 	if(numA>1) for(int i=1; i<numA; i++){
-		printf("%s\n", Arg[1]);
-		aux=1;
 		if(lstat(Arg[i], &stats)==-1)perror("error");
 		else{
 			format=LetraTF(stats.st_mode);
@@ -498,10 +495,9 @@ void deltree(char *Arg[], int numA){
 							if(strcmp(Arg[i], "/")!=0) strcat(recpath[1], "/");
 							strcat(recpath[1], dirname->d_name);
 							deltree(recpath, 2);
-							aux=0;
 						}
 					}if(closedir(dir)==-1) perror("error");
-					if(aux && rmdir(Arg[i]) == -1) perror("error1");
+					if(rmdir(Arg[i]) == -1) perror("error");
 					free(recpath[1]);
         		}
 			}else if(remove(Arg[i])==-1)perror("error");
