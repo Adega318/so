@@ -80,22 +80,13 @@ void autores(char* Arg[], int numA){
 }
 
 void pid(char* Arg[], int numA){
-    bool p=0;
-
-    if(numA==1){
-    }else if(strcmp(Arg[1],"-p")==0){
-        p=1;
-    }
-
-    if(!p){
-        pid_t pid = getpid();
-        printf("pid: %d\n", pid);
-    }else if(p){
-        pid_t pid = getppid();
+    if(numA!=1 && strcmp(Arg[1],"-p")==0){
+		pid_t pid = getppid();
         printf("pid padre: %d\n", pid);
-    }
-
-
+	}else{
+		pid_t pid = getpid();
+        printf("pid: %d\n", pid);
+	}
 }
 
 void carpeta(char* Arg[], int numA){
