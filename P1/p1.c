@@ -5,6 +5,7 @@ Autores:
 */
 
 #include "funcion.h"
+#include "list.h"
 
 int main(){
     int salida=0, numA=0, c;
