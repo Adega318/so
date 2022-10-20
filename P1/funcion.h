@@ -41,7 +41,6 @@ typedef tPosL tList;
 //Funciones de control
 int trocear(char *entrada, char* salida[]);
 int procesadoC(char* Arg[], int numA,tList* L);
-void printC(char* Arg[], int numA);
 
 //Funciones de comandos
 //p0
@@ -52,8 +51,8 @@ void fecha(char* Arg[], int numA);
 void hist(char* Arg[], int numA, tList *L);
 	void mostrarHistN(int n, tList *L);
 	void fullHist(tList L);
-void comando(char* Arg[], int numA, tList *L);
-void infosis(char* Arg[], int numA);
+void comando(char* Arg[], tList *L);
+void infosis();
 void ayuda(char* Arg[], int numA);
 //p1
 struct modCom ModComCreate();

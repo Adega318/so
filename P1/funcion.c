@@ -24,9 +24,9 @@ int procesadoC(char* Arg[], int numA,tList* L){
         }else if(strcmp(Arg[0],"comando")==0){
 			if(numA==1){
 				hist(Arg, 1, L);
-			}else comando(Arg, numA, L);
+			}else comando(Arg, L);
         }else if(strcmp(Arg[0],"infosis")==0){
-			infosis(Arg, 1);
+			infosis();
         }else if(strcmp(Arg[0],"ayuda")==0){
 			ayuda(Arg, numA);
         }else if(strcmp(Arg[0],"create")==0){
@@ -46,16 +46,6 @@ int procesadoC(char* Arg[], int numA,tList* L){
     
     return 0;
 }
-
-//Mostrar comando
-void printC(char* Arg[], int numA){
-    for(int i=0; i<numA;i++){
-        printf("%s ",Arg[i]);
-    }
-    printf("\n");
-}
-
-
 
 //FUNCIONES DE COMANDOS
 //p0
@@ -162,7 +152,7 @@ void fullHist(tList L){
 }
 
 
-void comando(char* Arg[], int numA, tList *L){
+void comando(char* Arg[], tList *L){
     int numHist=atoi(Arg[1]), numB;
     char* almacenamiento[TROCEO];
     tPosL p=findData(numHist, *L);
@@ -182,7 +172,7 @@ void comando(char* Arg[], int numA, tList *L){
     
 }
 
-void infosis(char* Arg[], int numA){
+void infosis(){
     struct utsname data;
     uname(&data);
     printf("Sidtema:  %s (%s)\nSO:  %s-%s-%s\n", data.nodename, data.machine, data.sysname, data.release, data.version);
