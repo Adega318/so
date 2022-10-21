@@ -19,13 +19,11 @@ void create(char* Arg[], int numA){
 
 	while (numA>1 && i<numA && *Arg[i]=='-'){
 		if(strcmp(Arg[i], "-f")==0) file=1;
-        else{
-            return;
-    	}
+        else return;
 		i++;
 	}
 
-	if(i<numA) for(i=i; i<numA; i++){
+	if(i<numA){
 		if(!file && mkdir(Arg[i], S_IRWXU)==-1){
 			if(errno==EEXIST)perror("Imposible crear");
 			else perror("error");
@@ -56,7 +54,7 @@ void statfun(char* Arg[], int numA){
 		else printf("error: %s no es un modificador valido\n", Arg[i]);
 		i++;
 	}
-
+	
 	if(i<numA){
 		for(i=i; i<numA; i++){
 			if (lstat(Arg[i], &stats)==0){

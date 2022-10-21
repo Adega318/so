@@ -32,7 +32,7 @@ int procesadoC(char* Arg[], int numA,tList* L){
         }else if(strcmp(Arg[0],"ayuda")==0){
 			ayuda(Arg, numA);
         }else if(strcmp(Arg[0],"create")==0){
-            create(Arg, 2);
+            create(Arg, numA);
         }else if(strcmp(Arg[0],"stat")==0){
 			statfun(Arg, numA);
         }else if(strcmp(Arg[0],"list")==0){
