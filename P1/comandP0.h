@@ -2,6 +2,7 @@
 #define COMAND_P0_H
 #include "includes.h"
 #include "list.h"
+#include "funcion.h"
 
 void autores(char* Arg[], int numA);
 void pid(char* Arg[], int numA);
