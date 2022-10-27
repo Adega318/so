@@ -3,5 +3,6 @@
 		"stdlib.h": "c",
 		"includes.h": "c",
 		"pwd.h": "c"
-	}
+	},
+	"C_Cpp.errorSquiggles": "Disabled"
 }
