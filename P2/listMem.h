@@ -5,16 +5,15 @@
 
 #define LNULL NULL
 
-typedef struct tNode* tPosL;
-struct tNode{
+typedef struct tNodeMem* tPosL;
+typedef struct tNodeMem{
     char* hex;
     int space;
     time_t creationTime;
     char* tipoMem;
     int key;
     tPosL next;
-};
-typedef tNode tNode;
+} tNodeMem;
 typedef tPosL tList;
 
 void createEmptyList(tList *L);
@@ -23,9 +22,9 @@ tPosL first(tList L);
 tPosL last(tList L);
 tPosL next(tPosL P, tList L);
 tPosL previous(tPosL P, tList L);
-char* getData(tPosL P, tList L);
+tNodeMem getData(tPosL P, tList L);
 tPosL findData(int I, tList L);
-bool insertData(char *I, tList *L);
+bool insertData(tNodeMem I, tList *L);
 void delList( tList *L);
 
 #endif

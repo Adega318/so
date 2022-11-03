@@ -70,8 +70,8 @@ void statprint (struct modCom modArg, char* pArg,char* Arg, struct stat stats){
 	int size=0;
 	if(modArg.lon){
 		struct tm *time;
-		if(modArg.acc)time=gmtime(&stats.st_atim.tv_sec);
-		else time=gmtime(&stats.st_mtim.tv_sec);
+		if(modArg.acc)time=gmtime(&stats.st_atime);
+		else time=gmtime(&stats.st_mtime);
 		printf("%d/%02d/%02d-%02d:%02d ", time->tm_year+1900, time->tm_mon+1, time->tm_mday, time->tm_hour+2, time->tm_min);
 		printf("%3d ", (int)stats.st_nlink);
 		printf("(%8d)\t", (int)stats.st_ino);

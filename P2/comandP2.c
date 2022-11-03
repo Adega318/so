@@ -1,8 +1,8 @@
 #include "comandP2.h"
-#include "list.h"
+#include "listMem.h"
 
-struct modCom ModComCreate(){
-	struct modCom modArg;
+struct modComMem ModComMemCreate(){
+	struct modComMem modArg;
 	modArg.malloc=0, modArg.createShared=0, modArg.mmap=0, modArg.delKey=0, modArg.addr=0;
 	modArg.read=0, modArg.o=0, modArg.blocks=0, modArg.funcs=0, modArg.vars=0, modArg.all=0;
 	modArg.pmap=0;
@@ -10,7 +10,7 @@ struct modCom ModComCreate(){
 }
 
 void allocate(char* Arg[], int numA, tList *bloquesMem){
-	struct modCom modArg=ModComCreate();
+	struct modComMem modArg=ModComMemCreate();
 	bool standard=1;
 	bool standardPlus=0;
 
@@ -25,7 +25,22 @@ void allocate(char* Arg[], int numA, tList *bloquesMem){
 	}
 
 	if(modArg.malloc){
-		if(numA>3 && )
+		if(numA==2 || (numA>=3 && *Arg[2]=='-')) standardPlus=1;
+		else{
+			int size= atoi(Arg[2]);
+			void* hex=malloc(size);
+			if(hex==NULL) printf("No se asignan bloques de 0 bytes");
+			else{
+				tNodeMem data;
+				time_t t;
+				data.creationTime=time(&t);
+				data.hex=hex;
+				data.space=size;
+				strcpy(data.tipoMem, "malloc");
+				insertData(data, bloquesMem);
+				printf("Asignados %d bytes en ox%012X", size, hex);
+			}
+		}
 	}
 
 	if(standard){

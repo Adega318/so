@@ -3,7 +3,7 @@
 
 #include "includes.h"
 
-struct modCom
+struct modComMem
 {
     bool malloc;
     bool shared;
@@ -19,6 +19,7 @@ struct modCom
     bool all;
     bool pmap;
 };
+
 
 
 void allocate();

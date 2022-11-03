@@ -1,7 +1,7 @@
 #include "listMem.h"
 
 bool createNode(tPosL *P){
-    *P=malloc(sizeof(struct tNode));
+    *P=malloc(sizeof(struct tNodeMem));
     return *P!=LNULL;
 }
 
@@ -43,13 +43,13 @@ tPosL findData(int I, tList L){
     return p;   
 }
 
-bool insertData(tNode Data,tList *L){
+bool insertData(tNodeMem Data,tList *L){
     tPosL q,p;
     bool aux= 1;
 
     if(!createNode(&q)) aux=0;
     else{
-        q=Data;
+        *q=Data;
         q->next=LNULL;
         if(*L==LNULL)*L=q;
         else{
@@ -61,7 +61,7 @@ bool insertData(tNode Data,tList *L){
     return aux;
 }
 
-tNode getData(tPosL P, tList L){
+tNodeMem getData(tPosL P, tList L){
     return *P;
 }
 
