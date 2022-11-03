@@ -23,6 +23,7 @@ struct modComMem
 
 
 void allocate();
+    bool allocateMalloc(char* Arg[], int numA, struct modComMem modArg, tList* bloquesMem);
 void deallocate();
 void io();
 void memdump();

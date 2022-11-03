@@ -7,12 +7,12 @@
 
 typedef struct tNodeMem* tPosL;
 typedef struct tNodeMem{
-    char* hex;
-    int space;
-    time_t creationTime;
-    char* tipoMem;
-    int key;
-    tPosL next;
+	void* hex;
+	int space;
+	time_t creationTime;
+	char* tipoMem;
+	int key;
+	tPosL next;
 } tNodeMem;
 typedef tPosL tList;
 

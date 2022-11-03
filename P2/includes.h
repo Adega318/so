@@ -18,6 +18,7 @@
 #include <sys/sem.h>
 #include <sys/stat.h>
 #include <unistd.h>
+#include <limits.h>
 
 #define TROCEO 50 //numero maximo de argumentos de entrada
 #define TMALLOC 4090 //tamaño maximo de entrada
