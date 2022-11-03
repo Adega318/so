@@ -4,11 +4,17 @@
 #include "includes.h"
 
 #define LNULL NULL
+
 typedef struct tNode* tPosL;
 struct tNode{
-    char* data;
+    char* hex;
+    int space;
+    time_t creationTime;
+    char* tipoMem;
+    int key;
     tPosL next;
 };
+typedef tNode tNode;
 typedef tPosL tList;
 
 void createEmptyList(tList *L);

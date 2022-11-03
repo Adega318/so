@@ -1,4 +1,4 @@
-#include "list.h"
+#include "listMem.h"
 
 bool createNode(tPosL *P){
     *P=malloc(sizeof(struct tNode));
@@ -43,14 +43,13 @@ tPosL findData(int I, tList L){
     return p;   
 }
 
-bool insertData(char* I,tList *L){
+bool insertData(tNode Data,tList *L){
     tPosL q,p;
     bool aux= 1;
 
     if(!createNode(&q)) aux=0;
     else{
-        q->data=malloc(255);
-        strcpy(q->data, I);
+        q=Data;
         q->next=LNULL;
         if(*L==LNULL)*L=q;
         else{
@@ -62,8 +61,8 @@ bool insertData(char* I,tList *L){
     return aux;
 }
 
-char* getData(tPosL P, tList L){
-    return P->data;
+tNode getData(tPosL P, tList L){
+    return *P;
 }
 
 void delList( tList *L){
@@ -72,7 +71,11 @@ void delList( tList *L){
     p=*L;
     while(p!=LNULL){
         q=p->next;
-		free(p->data);
+		free(p->hex);
+        free(p->space);
+        free(p->creationTime);
+        free(p->tipoMem);
+        free(p->key);
         free(p);
         p=q;
     }

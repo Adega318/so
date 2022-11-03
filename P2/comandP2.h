@@ -3,6 +3,24 @@
 
 #include "includes.h"
 
+struct modCom
+{
+    bool malloc;
+    bool shared;
+    bool createShared;
+    bool mmap;
+    bool delKey;
+    bool addr;
+    bool read;
+    bool o;
+    bool blocks;
+    bool funcs;
+    bool vars;
+    bool all;
+    bool pmap;
+};
+
+
 void allocate();
 void deallocate();
 void io();
