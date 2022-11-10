@@ -17,6 +17,7 @@
 #include <sys/ipc.h>
 #include <sys/sem.h>
 #include <sys/stat.h>
+#include <sys/shm.h>
 #include <unistd.h>
 #include <limits.h>
 

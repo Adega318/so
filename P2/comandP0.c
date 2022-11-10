@@ -103,7 +103,7 @@ void fullHist(tList L){
 }
 
 
-void comando(char* Arg[], tList *L){
+void comando(char* Arg[], tList *L, tListM *LM){
     int numHist=atoi(Arg[1]), numB;
     char* almacenamiento[TROCEO];
     tPosL p=findData(numHist, *L);
@@ -116,7 +116,7 @@ void comando(char* Arg[], tList *L){
         if(strcmp(almacenamiento[0], "comando")==0){
             printf("error: comando no premitido\n");
         }else{
-            procesadoC(almacenamiento, numB, L);
+            procesadoC(almacenamiento, numB, L, LM);
         }
         free(I);
     }else printf("error: comando no encontrado\n");

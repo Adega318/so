@@ -12,6 +12,7 @@ int main(){
 	char* entrada=malloc(TMALLOC);
     char* almacenamiento[TROCEO];
     tList L;
+    tListM LM;
     
     createEmptyList(&L);
 
@@ -19,12 +20,13 @@ int main(){
         printf("--> ");
         if(scanf("%[^\n]s", entrada)>0) insertData(entrada, &L);
         numA=trocear(entrada,almacenamiento);
-        salida=procesadoC(almacenamiento,numA, &L);
+        salida=procesadoC(almacenamiento,numA, &L, &LM);
 		strcpy(entrada, "");
 		while((c = getchar()) != '\n' && c != EOF);
     }
 	free(entrada);
     delList(&L);
+    delListM(&LM);
 
     return 0;
 }

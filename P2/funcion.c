@@ -1,6 +1,7 @@
 #include "funcion.h"
 #include "comandP0.h"
 #include "comandP1.h"
+#include "comandP2.h"
 
 //Troceado de la cadena
 int trocear(char *entrada, char* salida[]){
@@ -11,7 +12,7 @@ int trocear(char *entrada, char* salida[]){
 }
 
 //Procesado de comandos
-int procesadoC(char* Arg[], int numA,tList* L){
+int procesadoC(char* Arg[], int numA,tList* L, tListM* listMem){
     if(numA>0){
         if(strcmp(Arg[0],"autores")==0){
             autores(Arg, numA);
@@ -26,7 +27,7 @@ int procesadoC(char* Arg[], int numA,tList* L){
         }else if(strcmp(Arg[0],"comando")==0){
 			if(numA==1){
 				hist(Arg, 1, L);
-			}else comando(Arg, L);
+			}else comando(Arg, L, listMem);
         }else if(strcmp(Arg[0],"infosis")==0){
 			infosis();
         }else if(strcmp(Arg[0],"ayuda")==0){
@@ -41,6 +42,8 @@ int procesadoC(char* Arg[], int numA,tList* L){
             delete(Arg, numA);
         }else if(strcmp(Arg[0],"deltree")==0){
             deltree(Arg, numA);
+        }else if(strcmp(Arg[0],"allocate")==0){
+            allocate(Arg, numA, listMem);
         }else if(strcmp(Arg[0],"fin")==0 || strcmp(Arg[0],"bye")==0 || strcmp(Arg[0],"salir")==0){
             return 1;
         }else printf("error: comando no reconozido\n");

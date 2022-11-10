@@ -1,30 +1,31 @@
-#ifndef LIST_H
-#define LIST_H
+#ifndef LISTM_H
+#define LISTM_H
 
 #include "includes.h"
 
 #define LNULL NULL
 
-typedef struct tNodeMem* tPosL;
+typedef struct tNodeMem* tPosLM;
 typedef struct tNodeMem{
 	void* hex;
 	int space;
 	time_t creationTime;
 	char* tipoMem;
 	int key;
-	tPosL next;
+	tPosLM next;
 } tNodeMem;
-typedef tPosL tList;
+typedef tPosLM tListM;
 
-void createEmptyList(tList *L);
-bool isEmptyList(tList L);
-tPosL first(tList L);
-tPosL last(tList L);
-tPosL next(tPosL P, tList L);
-tPosL previous(tPosL P, tList L);
-tNodeMem getData(tPosL P, tList L);
-tPosL findData(int I, tList L);
-bool insertData(tNodeMem I, tList *L);
-void delList( tList *L);
+void createEmptyListM(tListM *L);
+bool isEmptyListM(tListM L);
+tPosLM firstM(tListM L);
+tPosLM lastM(tListM L);
+tPosLM nextM(tPosLM P, tListM L);
+tPosLM previousM(tPosLM P, tListM L);
+tNodeMem getDataM(tPosLM P, tListM L);
+tPosLM findDataM(int I, tListM L);
+bool insertDataM(tNodeMem I, tListM *L);
+void delListM( tListM *L);
+void printType(char* type, tListM* L);
 
 #endif

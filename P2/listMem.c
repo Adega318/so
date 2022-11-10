@@ -1,57 +1,57 @@
 #include "listMem.h"
 
-bool createNode(tPosL *P){
+bool createNodeM(tPosLM *P){
     *P=malloc(sizeof(struct tNodeMem));
     return *P!=LNULL;
 }
 
-void createEmptyList(tList *L){
+void createEmptyListM(tListM *L){
     *L=LNULL;
 }
 
-bool isEmptyList(tList L){
+bool isEmptyListM(tListM L){
     return L==LNULL;
 }
 
-tPosL first(tList L){
+tPosLM firstM(tListM L){
     return L;
 }
 
-tPosL last(tList L){
-    tPosL p;
+tPosLM lastM(tListM L){
+    tPosLM p;
     for(p=L; p->next!=LNULL; p=p->next);
     return p;
 }
 
-tPosL next(tPosL P, tList L){
+tPosLM nextM(tPosLM P, tListM L){
     return P->next;
 }
 
-tPosL previous(tPosL P, tList L){
-    tPosL p;
+tPosLM previousM(tPosLM P, tListM L){
+    tPosLM p;
     if(P==L) p=LNULL;
     else for(p=L; p->next!=P; p=p->next);
     return p;
 }
 
-tPosL findData(int I, tList L){
-    tPosL p=L;
+tPosLM findDataM(int I, tListM L){
+    tPosLM p=L;
     int i=1;
 
-    if (isEmptyList(L)) p=LNULL;
+    if (isEmptyListM(L)) p=LNULL;
     else for(i=1; i!=I; i++) p=p->next;
     return p;   
 }
 
-bool insertData(tNodeMem Data,tList *L){
-    tPosL q,p;
+bool insertDataM(tNodeMem Data,tListM *L){
+    tPosLM q,p;
     bool aux= 1;
 
-    if(!createNode(&q)) aux=0;
+    if(!createNodeM(&q)) aux=0;
     else{
         *q=Data;
         q->next=LNULL;
-        if(*L==LNULL)*L=q;
+        if(*L==LNULL) *L=q;
         else{
             for (p = *L; p->next != LNULL; p = p->next);
             p->next = q;
@@ -61,23 +61,39 @@ bool insertData(tNodeMem Data,tList *L){
     return aux;
 }
 
-tNodeMem getData(tPosL P, tList L){
+tNodeMem getDataM(tPosLM P, tListM L){
     return *P;
 }
 
-void delList( tList *L){
-    tPosL p,q;
+void delListM( tListM *L){
+    tPosLM p,q;
 
     p=*L;
     while(p!=LNULL){
         q=p->next;
-		free(p->hex);
-        free(p->space);
-        free(p->creationTime);
-        free(p->tipoMem);
-        free(p->key);
         free(p);
         p=q;
     }
     *L=LNULL;
+}
+
+void printType(char* type, tListM* L){
+    tPosLM p=*L;
+    tNodeMem data;
+    struct tm *time;
+    char fecha[100];
+    
+
+    if(!isEmptyListM(*L))while(p!=LNULL){
+        data=getDataM(p, *L);
+        if(type==NULL || strcmp(data.tipoMem, type)==0){
+            time= localtime(&data.creationTime);
+            strftime(fecha, 100,"%b %d %H:%M ", time);
+            printf("      %p              %d %s %s", 
+            data.hex, data.space, fecha, data.tipoMem);
+            if(strcmp(data.tipoMem, "shared")==0)printf(" (%d)", data.key);
+            printf("\n");
+        }
+        p=nextM(p, *L);
+    }
 }
