@@ -15,6 +15,7 @@ int main(){
     tListM LM;
     
     createEmptyList(&L);
+    createEmptyListM(&LM);
 
     while(salida==0){
         printf("--> ");

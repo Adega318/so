@@ -11,28 +11,29 @@ struct modComMem ModComMemCreate(){
 
 void allocate(char* Arg[], int numA, tListM *bloquesMem){
 	struct modComMem modArg=ModComMemCreate();
-	bool standard=1;
 	bool standardPlus=0;
+	char *argChop=NULL;
 
 	if(numA>1 && *Arg[1]=='-')
 	{
-		standard=0;
 		if(strcmp(Arg[1], "-malloc")==0) modArg.malloc=1;
 		else if(strcmp(Arg[1], "-createshared")==0) modArg.createShared=1;
 		else if(strcmp(Arg[1], "-shared")==0) modArg.shared=1;
 		else if(strcmp(Arg[1], "-mmap")==0) modArg.malloc=1;
-		else{ standard=1;}
 	}
 
 	if(modArg.malloc) standardPlus=allocateMalloc(Arg, numA, bloquesMem);
 	else if(modArg.shared) standardPlus=allocateShared(Arg, numA, bloquesMem);
 	else if(modArg.createShared) standardPlus=allocateCreateshared(Arg, numA, bloquesMem);
 
-	if(standard){
+	if(numA==1 || standardPlus){
 		printf("******Lista de bloques asignados ");
-		if(standardPlus) printf("%s ", Arg[1]);
+		if(standardPlus){
+			argChop= Arg[1]+1;
+			printf("%s ", argChop);
+		}
 		printf("para el proceso %d\n", getpid());
-		printType(standardPlus?Arg[1]:NULL, bloquesMem);
+		printType(argChop, bloquesMem);
 	}
 }
 
@@ -62,13 +63,12 @@ bool allocateShared(char* Arg[], int numA, tListM* bloquesMem){
 	if(numA==2 || (numA>2 && *Arg[2]=='-')) return 1;
 	else{
 		tNodeMem data;
-		int id;
+		void *hex;
 		key_t key= (key_t)strtoul(Arg[2],NULL,10);
-
-		if(id=ObtenerMemoriaShmget(key, 0, &data)==NULL)printf("No se asignan bloques de 0 bytes\n");
-		else if ((data.hex=shmat(id,NULL,0))==(void*) -1){
-			perror("error1");
-		}else{
+		hex=ObtenerMemoriaShmget(key, 0, &data);
+		if(hex==NULL)printf("No se asignan bloques de 0 bytes\n");
+		else{
+			data.hex=hex;
 			insertDataM(data, bloquesMem);
 			printf("Memoria compartida de clave %lu  en %p\n", (unsigned long) key, data.hex);
 		}
@@ -89,7 +89,8 @@ bool allocateCreateshared (char* Arg[], int numA, tListM* bloquesMem){
 			return 0;
 		}
 		tNodeMem data;
-		if ((hex=ObtenerMemoriaShmget(cl,size, &data)!=NULL)){
+		hex=ObtenerMemoriaShmget(cl,size, &data);
+		if ((hex!=NULL)){
 			insertDataM(data, bloquesMem);
 			printf ("Asignados %lu bytes en %p\n",(unsigned long) size, data.hex);
 		}
@@ -97,7 +98,7 @@ bool allocateCreateshared (char* Arg[], int numA, tListM* bloquesMem){
 	}return 0;
 }
 
-void * ObtenerMemoriaShmget (key_t clave, size_t tam, tNodeMem* Mnode){
+void* ObtenerMemoriaShmget (key_t clave, size_t tam, tNodeMem* Mnode){
     void * p;
     int aux,id,flags=0777;
     struct shmid_ds s;
@@ -125,3 +126,5 @@ void * ObtenerMemoriaShmget (key_t clave, size_t tam, tNodeMem* Mnode){
 
     return p;
 }
+
+
