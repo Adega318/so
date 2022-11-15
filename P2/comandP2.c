@@ -221,7 +221,6 @@ bool deallocateMalloc(char* Arg[], int numA, tListM* LM){
 		tPosLM p;
 		tNodeMem q;
 		if(size!=ULONG_MAX){
-			printf("%d\n", size);
 			p=findSizeInType(size, Arg[1]+1, *LM);
 			if(p!=NULL){
 				q=getDataM(p, *LM);
