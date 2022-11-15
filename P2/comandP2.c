@@ -102,24 +102,24 @@ bool allocateCreateshared (char* Arg[], int numA, tListM* bloquesMem){
 }
 
 void* ObtenerMemoriaShmget (key_t clave, size_t tam, tNodeMem* Mnode){
-    void * p;
-    int aux,id,flags=0777;
-    struct shmid_ds s;
+	void * p;
+	int aux,id,flags=0777;
+	struct shmid_ds s;
 
-    if (tam)     /*tam distito de 0 indica crear */
-        flags=flags | IPC_CREAT | IPC_EXCL;
-    if (clave==IPC_PRIVATE)  /*no nos vale*/
-        {errno=EINVAL; return NULL;}
-    if ((id=shmget(clave, tam, flags))==-1)
-        return (NULL);
-    if ((p=shmat(id,NULL,0))==(void*) -1){
-        aux=errno;
-        if (tam)
-             shmctl(id,IPC_RMID,NULL);
-        errno=aux;
-        return (NULL);
-    }
-    shmctl (id,IPC_STAT,&s);
+	if (tam)     /*tam distito de 0 indica crear */
+		flags=flags | IPC_CREAT | IPC_EXCL;
+	if (clave==IPC_PRIVATE)  /*no nos vale*/
+		{errno=EINVAL; return NULL;}
+	if ((id=shmget(clave, tam, flags))==-1)
+		return (NULL);
+	if ((p=shmat(id,NULL,0))==(void*) -1){
+		aux=errno;
+		if (tam)
+			shmctl(id,IPC_RMID,NULL);
+		errno=aux;
+		return (NULL);
+	}
+	shmctl (id,IPC_STAT,&s);
 	Mnode->creationTime=s.shm_ctime;
 	Mnode->hex=p;
 	Mnode->space=s.shm_segsz;
@@ -127,7 +127,7 @@ void* ObtenerMemoriaShmget (key_t clave, size_t tam, tNodeMem* Mnode){
 	Mnode->tipoMem=malloc(sizeof("shared"));
 	strcpy(Mnode->tipoMem, "shared");
 
-    return p;
+	return p;
 }
 
 bool allocateMmap (char* Arg[], int numA, tListM* bloquesMem){
@@ -156,14 +156,14 @@ void do_AllocateMmap(char *arg[], tListM *LM){
 }
 
 void * MapearFichero (char * fichero, int protection, tListM* LM){
-    int df, map=MAP_PRIVATE,modo=O_RDONLY;
-    struct stat s;
-    void *p;
+	int df, map=MAP_PRIVATE,modo=O_RDONLY;
+	struct stat s;
+	void *p;
 	time_t t=time(NULL);
 
-    if (protection&PROT_WRITE) modo=O_RDWR;
-    if (stat(fichero,&s)==-1 || (df=open(fichero, modo))==-1) return NULL;
-    if ((p=mmap (NULL,s.st_size, protection,map,df,0))==MAP_FAILED) return NULL;
+	if (protection&PROT_WRITE) modo=O_RDWR;
+	if (stat(fichero,&s)==-1 || (df=open(fichero, modo))==-1) return NULL;
+	if ((p=mmap (NULL,s.st_size, protection,map,df,0))==MAP_FAILED) return NULL;
 
 	tNodeMem data;
 	localtime(&t);
@@ -175,7 +175,7 @@ void * MapearFichero (char * fichero, int protection, tListM* LM){
 	strcpy(data.tipoMem, fichero);
 	insertDataM(data, LM);
 
-    return p;
+	return p;
 }
 
 
@@ -266,19 +266,19 @@ bool deallocateKey(char* Arg[], int numA, tListM* LM){
 }
 
 void do_DeallocateDelkey (char *key){
-   key_t clave;
-   int id;
+key_t clave;
+int id;
 
-   if (key==NULL || (clave=(key_t) strtoul(key,NULL,10))==IPC_PRIVATE){
-        printf ("      delkey necesita clave_valida\n");
-        return;
-   }
-   if ((id=shmget(clave,0,0666))==-1){
-        perror ("shmget: imposible obtener memoria compartida");
-        return;
-   }
-   if (shmctl(id,IPC_RMID,NULL)==-1)
-        perror ("shmctl: imposible eliminar memoria compartida\n");
+if (key==NULL || (clave=(key_t) strtoul(key,NULL,10))==IPC_PRIVATE){
+		printf ("      delkey necesita clave_valida\n");
+		return;
+}
+if ((id=shmget(clave,0,0666))==-1){
+		perror ("shmget: imposible obtener memoria compartida");
+		return;
+}
+if (shmctl(id,IPC_RMID,NULL)==-1)
+		perror ("shmctl: imposible eliminar memoria compartida\n");
 }
 
 bool deallocateMmap(char* Arg[], int numA, tListM* LM){
