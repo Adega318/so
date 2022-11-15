@@ -23,7 +23,7 @@ struct modComMem
 
 
 
-void allocate();
+void allocate(char* Arg[], int numA, tListM *bloquesMem);
     bool allocateMalloc(char* Arg[], int numA, tListM* bloquesMem);
     bool allocateShared(char* Arg[], int numA, tListM* bloquesMem);
     bool allocateCreateshared (char* Arg[], int numA, tListM* bloquesMem);
@@ -31,7 +31,8 @@ void allocate();
     bool allocateMmap (char* Arg[], int numA, tListM* bloquesMem);
     void do_AllocateMmap(char *arg[], tListM *LM);
     void * MapearFichero (char*, int, tListM*);
-void deallocate();
+void deallocate(char* Arg[], int numA, tListM *bloquesMem);
+    bool deallocateMalloc(char* Arg[], int numA, tListM* LM);
 void io();
 void memdump();
 void memfill();

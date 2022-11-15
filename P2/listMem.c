@@ -43,6 +43,30 @@ tPosLM findDataM(int I, tListM L){
     return p;   
 }
 
+tPosLM findHex(void* hex, tListM L){
+    tPosLM p=L;
+
+    if (isEmptyListM(L)) p=LNULL;
+    else while(p!=NULL){
+        if(getDataM(p, L).hex==hex) return p;
+        p=nextM(p, L);
+    }
+    return p;   
+}
+
+tPosLM findSizeInType(int S, char* type, tListM LM){
+    tPosLM p=LM;
+    tNodeMem q;
+
+    if (isEmptyListM(LM)) p=LNULL;
+    else while(p!=NULL){
+        q=getDataM(p, LM);
+        if(q.space==S && strcmp(q.tipoMem, type)==0) return p;
+        p=nextM(p, LM);
+    }
+    return p;   
+}
+
 bool insertDataM(tNodeMem Data,tListM *L){
     tPosLM q,p;
     bool aux= 1;
@@ -75,6 +99,13 @@ void delListM( tListM *L){
         p=q;
     }
     *L=LNULL;
+}
+
+void delPos(tPosLM p, tListM* LM){
+    if(p==firstM(*LM)) *LM=p->next;
+    else previousM(p, *LM)->next=p->next;
+    free(p->tipoMem);
+    free(p);
 }
 
 void printType(char* type, tListM* L){

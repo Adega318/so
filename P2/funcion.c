@@ -44,6 +44,8 @@ int procesadoC(char* Arg[], int numA,tList* L, tListM* listMem){
             deltree(Arg, numA);
         }else if(strcmp(Arg[0],"allocate")==0){
             allocate(Arg, numA, listMem);
+        }else if(strcmp(Arg[0],"deallocate")==0){
+            deallocate(Arg, numA, listMem);
         }else if(strcmp(Arg[0],"fin")==0 || strcmp(Arg[0],"bye")==0 || strcmp(Arg[0],"salir")==0){
             return 1;
         }else printf("error: comando no reconozido\n");

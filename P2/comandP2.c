@@ -9,6 +9,8 @@ struct modComMem ModComMemCreate(){
 	return modArg;
 }
 
+
+//ALLOCATE
 void allocate(char* Arg[], int numA, tListM *bloquesMem){
 	struct modComMem modArg=ModComMemCreate();
 	bool standardPlus=0;
@@ -19,7 +21,7 @@ void allocate(char* Arg[], int numA, tListM *bloquesMem){
 		if(strcmp(Arg[1], "-malloc")==0) modArg.malloc=1;
 		else if(strcmp(Arg[1], "-createshared")==0) modArg.createShared=1;
 		else if(strcmp(Arg[1], "-shared")==0) modArg.shared=1;
-		else if(strcmp(Arg[1], "-mmap")==0) modArg.malloc=1;
+		else if(strcmp(Arg[1], "-mmap")==0) modArg.mmap=1;
 	}
 
 	if(modArg.malloc) standardPlus=allocateMalloc(Arg, numA, bloquesMem);
@@ -175,3 +177,59 @@ void * MapearFichero (char * fichero, int protection, tListM* LM){
 
     return p;
 }
+
+
+//DEALLOCATE
+void deallocate(char* Arg[], int numA, tListM *LM){
+	struct modComMem modArg=ModComMemCreate();
+	bool standardPlus=0;
+	char *argChop=NULL;
+
+	if(numA>1 && *Arg[1]=='-')
+	{
+		if(strcmp(Arg[1], "-malloc")==0) modArg.malloc=1;
+		else if(strcmp(Arg[1], "-delkey")==0) modArg.delKey=1;
+		else if(strcmp(Arg[1], "-shared")==0) modArg.shared=1;
+		else if(strcmp(Arg[1], "-mmap")==0) modArg.mmap=1;
+		else if(strcmp(Arg[1], "addr")==0) modArg.addr=1;
+	}
+
+	if(modArg.malloc) standardPlus=deallocateMalloc(Arg, numA, LM);
+
+	if(numA==1 || standardPlus){
+		printf("******Lista de bloques asignados ");
+		if(standardPlus){
+			argChop= Arg[1]+1;
+			printf("%s ", argChop);
+		}
+		printf("para el proceso %d\n", getpid());
+		printType(argChop, LM);
+	}
+}
+
+void dealocateType(void* hex, char* type, tListM* LM){
+	if(strcmp(type, "malloc")==0){
+		free(hex);
+	}
+}
+
+bool deallocateMalloc(char* Arg[], int numA, tListM* LM){
+	if(numA==2 || (numA>2 && *Arg[2]=='-')) return 1;
+	else{
+		int size= (int)strtoul(Arg[2],NULL,10);
+		void* hex=NULL;
+		tPosLM p;
+		tNodeMem q;
+		if(size!=ULONG_MAX){
+			printf("%d\n", size);
+			p=findSizeInType(size, Arg[1]+1, *LM);
+			if(p!=NULL){
+				q=getDataM(p, *LM);
+				dealocateType(q.hex, "malloc", LM);
+				delPos(p, LM);
+			}else printf("No hay bloque de ese tamano asignado con malloc\n");
+		}
+	}return 0;
+}
+
+bool deallocateShared(){}
