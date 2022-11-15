@@ -91,7 +91,7 @@ void printType(char* type, tListM* L){
             strftime(fecha, 100,"%b %d %H:%M ", time);
             printf("      %p              %d %s %s", 
             data.hex, data.space, fecha, data.tipoMem);
-            if(strcmp(data.tipoMem, "shared")==0)printf(" (%d)", data.key);
+            if(strcmp(data.tipoMem, "malloc")!=0)printf(" (%s%d)",strcmp(data.tipoMem, "mmap")==0?"descriptor ":"", data.key);
             printf("\n");
         }
         p=nextM(p, *L);

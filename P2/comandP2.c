@@ -25,6 +25,7 @@ void allocate(char* Arg[], int numA, tListM *bloquesMem){
 	if(modArg.malloc) standardPlus=allocateMalloc(Arg, numA, bloquesMem);
 	else if(modArg.shared) standardPlus=allocateShared(Arg, numA, bloquesMem);
 	else if(modArg.createShared) standardPlus=allocateCreateshared(Arg, numA, bloquesMem);
+	else if(modArg.mmap) standardPlus=allocateMmap(Arg, numA, bloquesMem);
 
 	if(numA==1 || standardPlus){
 		printf("******Lista de bloques asignados ");
@@ -127,4 +128,50 @@ void* ObtenerMemoriaShmget (key_t clave, size_t tam, tNodeMem* Mnode){
     return p;
 }
 
+bool allocateMmap (char* Arg[], int numA, tListM* bloquesMem){
+	if(numA==2 || (numA>2 && *Arg[2]=='-') || (numA>3 && *Arg[3]=='-')) return 1;
+	else {
+		if(strlen(Arg[3])>3)return 0;
+		do_AllocateMmap(Arg, bloquesMem);
+	}return 0;
+}
 
+
+void do_AllocateMmap(char *arg[], tListM *LM){ 
+	char *perm;
+	void *p;
+	int protection=0;
+	if ((perm=arg[3])!=NULL && strlen(perm)<4) {
+		if (strchr(perm,'r')!=NULL) protection|=PROT_READ;
+		if (strchr(perm,'w')!=NULL) protection|=PROT_WRITE;
+		if (strchr(perm,'x')!=NULL) protection|=PROT_EXEC;
+	}
+	if ((p=MapearFichero(arg[2],protection, LM))==NULL){
+		perror ("Imposible mapear fichero");
+	}else{
+		printf ("fichero %s mapeado en %p\n", arg[2], p);
+	}
+}
+
+void * MapearFichero (char * fichero, int protection, tListM* LM){
+    int df, map=MAP_PRIVATE,modo=O_RDONLY;
+    struct stat s;
+    void *p;
+	time_t t=time(NULL);
+
+    if (protection&PROT_WRITE) modo=O_RDWR;
+    if (stat(fichero,&s)==-1 || (df=open(fichero, modo))==-1) return NULL;
+    if ((p=mmap (NULL,s.st_size, protection,map,df,0))==MAP_FAILED) return NULL;
+
+	tNodeMem data;
+	localtime(&t);
+	data.creationTime=t;
+	data.hex=p;
+	data.space=s.st_size;
+	data.key=0;
+	data.tipoMem=malloc(sizeof("mmap"));
+	strcpy(data.tipoMem, "mmap");
+	insertDataM(data, LM);
+
+    return p;
+}
