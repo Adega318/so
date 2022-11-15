@@ -67,6 +67,19 @@ tPosLM findSizeInType(int S, char* type, tListM LM){
     return p;   
 }
 
+tPosLM finkey(key_t clave, tListM LM){
+    tPosLM p=LM;
+    tNodeMem q;
+
+    if(isEmptyListM(LM))p=LNULL;
+    else while(p!=NULL){
+        q=getDataM(p, LM);
+        if(q.key==clave) return p;
+        p=nextM(p, LM);
+    }
+    return p;
+}
+
 bool insertDataM(tNodeMem Data,tListM *L){
     tPosLM q,p;
     bool aux= 1;

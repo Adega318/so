@@ -195,6 +195,8 @@ void deallocate(char* Arg[], int numA, tListM *LM){
 	}
 
 	if(modArg.malloc) standardPlus=deallocateMalloc(Arg, numA, LM);
+	if(modArg.delKey) standardPlus=deallocateKey(Arg, numA, LM);
+	if(modArg.shared) standardPlus=deallocateShared(Arg, numA, LM);
 
 	if(numA==1 || standardPlus){
 		printf("******Lista de bloques asignados ");
@@ -217,7 +219,6 @@ bool deallocateMalloc(char* Arg[], int numA, tListM* LM){
 	if(numA==2 || (numA>2 && *Arg[2]=='-')) return 1;
 	else{
 		int size= (int)strtoul(Arg[2],NULL,10);
-		void* hex=NULL;
 		tPosLM p;
 		tNodeMem q;
 		if(size!=ULONG_MAX){
@@ -231,4 +232,50 @@ bool deallocateMalloc(char* Arg[], int numA, tListM* LM){
 	}return 0;
 }
 
-bool deallocateShared(){}
+bool deallocateShared(char* Arg[], int numA, tListM* LM){
+	if(numA==2 || (numA>2 && *Arg[2]=='-')) return 1;
+	else{
+		tPosLM p=NULL, p2;
+		tNodeMem q;
+		bool exists=false;
+		key_t clave= (key_t)  strtoul(Arg[2],NULL,10);
+		do{
+			p=finkey(clave, *LM);
+			if(p!=NULL){
+				p2=nextM(p, *LM);
+				exists=true;
+				q= getDataM(p, *LM);
+				if(shmdt(q.hex)==-1) perror("error");
+				else delPos(p, LM);
+				p=p2;
+			}
+			
+		}while(p!=NULL);
+		if(!exists) printf("No hay bloque de esa clave mapeado en el proceso\n");
+		
+	}return 0;
+}
+
+bool deallocateKey(char* Arg[], int numA, tListM* LM){
+	if(numA==2 || (numA>2 && *Arg[2]=='-')) return 1;
+	else{
+		do_DeallocateDelkey(Arg[2]);
+		
+	}return 0;
+}
+
+void do_DeallocateDelkey (char *key){
+   key_t clave;
+   int id;
+
+   if (key==NULL || (clave=(key_t) strtoul(key,NULL,10))==IPC_PRIVATE){
+        printf ("      delkey necesita clave_valida\n");
+        return;
+   }
+   if ((id=shmget(clave,0,0666))==-1){
+        perror ("shmget: imposible obtener memoria compartida");
+        return;
+   }
+   if (shmctl(id,IPC_RMID,NULL)==-1)
+        perror ("shmctl: imposible eliminar memoria compartida\n");
+}

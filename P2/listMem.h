@@ -26,6 +26,7 @@ tNodeMem getDataM(tPosLM P, tListM L);
 tPosLM findDataM(int I, tListM L);
 tPosLM findHex(void* hex, tListM L);
 tPosLM findSizeInType(int S, char* type, tListM LM);
+tPosLM finkey(key_t clave, tListM LM);
 bool insertDataM(tNodeMem I, tListM *L);
 void delListM( tListM *L);
 void delPos(tPosLM p, tListM* LM);
