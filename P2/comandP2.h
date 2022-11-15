@@ -36,6 +36,7 @@ void deallocate(char* Arg[], int numA, tListM *bloquesMem);
     bool deallocateShared(char* Arg[], int numA, tListM* LM);
     bool deallocateKey(char* Arg[], int numA, tListM* LM);
     void do_DeallocateDelkey (char *key);
+    bool deallocateMmap(char* Arg[], int numA, tListM* LM);
 void io();
 void memdump();
 void memfill();

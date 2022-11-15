@@ -130,12 +130,12 @@ void printType(char* type, tListM* L){
 
     if(!isEmptyListM(*L))while(p!=LNULL){
         data=getDataM(p, *L);
-        if(type==NULL || strcmp(data.tipoMem, type)==0){
+        if(type==NULL || (strcmp(data.tipoMem, type)==0 || (strcmp(type, "mmap")==0 && strcmp(data.tipoMem, "malloc")!=0 && strcmp(data.tipoMem, "shared")!=0))){
             time= localtime(&data.creationTime);
             strftime(fecha, 100,"%b %d %H:%M ", time);
             printf("      %p              %d %s %s", 
             data.hex, data.space, fecha, data.tipoMem);
-            if(strcmp(data.tipoMem, "malloc")!=0)printf(" (%s%d)",strcmp(data.tipoMem, "mmap")==0?"descriptor ":"", data.key);
+            if(strcmp(data.tipoMem, "malloc")!=0)printf(" (%s%d)",strcmp(data.tipoMem, "shared")!=0?"descriptor ":"", data.key);
             printf("\n");
         }
         p=nextM(p, *L);

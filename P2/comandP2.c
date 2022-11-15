@@ -131,9 +131,9 @@ void* ObtenerMemoriaShmget (key_t clave, size_t tam, tNodeMem* Mnode){
 }
 
 bool allocateMmap (char* Arg[], int numA, tListM* bloquesMem){
-	if(numA==2 || (numA>2 && *Arg[2]=='-') || (numA>3 && *Arg[3]=='-')) return 1;
-	else {
-		if(strlen(Arg[3])>3)return 0;
+	if(numA==2 || (numA>2 && *Arg[2]=='-') || (numA>3 && *Arg[3]=='-')) { return 1;}
+	else{
+		if(numA>3 && strlen(Arg[3])>3){printf("Permisos rechazados\n"); return 0;}
 		do_AllocateMmap(Arg, bloquesMem);
 	}return 0;
 }
@@ -170,9 +170,9 @@ void * MapearFichero (char * fichero, int protection, tListM* LM){
 	data.creationTime=t;
 	data.hex=p;
 	data.space=s.st_size;
-	data.key=0;
-	data.tipoMem=malloc(sizeof("mmap"));
-	strcpy(data.tipoMem, "mmap");
+	data.key=df;
+	data.tipoMem=malloc(sizeof(fichero));
+	strcpy(data.tipoMem, fichero);
 	insertDataM(data, LM);
 
     return p;
@@ -197,6 +197,7 @@ void deallocate(char* Arg[], int numA, tListM *LM){
 	if(modArg.malloc) standardPlus=deallocateMalloc(Arg, numA, LM);
 	if(modArg.delKey) standardPlus=deallocateKey(Arg, numA, LM);
 	if(modArg.shared) standardPlus=deallocateShared(Arg, numA, LM);
+	if(modArg.mmap) standardPlus=deallocateMmap(Arg, numA, LM);
 
 	if(numA==1 || standardPlus){
 		printf("******Lista de bloques asignados ");
@@ -278,4 +279,26 @@ void do_DeallocateDelkey (char *key){
    }
    if (shmctl(id,IPC_RMID,NULL)==-1)
         perror ("shmctl: imposible eliminar memoria compartida\n");
+}
+
+bool deallocateMmap(char* Arg[], int numA, tListM* LM){
+	if(numA==2 || (numA>2 && *Arg[2]=='-')) return 1;
+	else{
+		if(!isEmptyListM(*LM)){
+			tPosLM p=*LM;
+			tNodeMem d;
+			bool sal=false;
+			while(p!=NULL && !sal){
+				d= getDataM(p, *LM);
+				if(strcmp(d.tipoMem, Arg[2])==0){
+					sal= true;
+				}else p=nextM(p, *LM);
+			}
+			if(sal){
+				munmap(d.hex, d.space);
+				delPos(p, LM);
+				return 0;
+			}
+		}printf("Fichero %s no mapeado", Arg[2]);
+	}return 0;
 }
