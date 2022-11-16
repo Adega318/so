@@ -46,6 +46,8 @@ int procesadoC(char* Arg[], int numA,tList* L, tListM* listMem){
 			allocate(Arg, numA, listMem);
 		}else if(strcmp(Arg[0],"deallocate")==0){
 			deallocate(Arg, numA, listMem);
+		}else if(strcmp(Arg[0],"i-o")==0){
+			IO(Arg, numA, listMem);
 		}else if(strcmp(Arg[0],"memory")==0){
 			memory(Arg, numA, *listMem);
 		}else if(strcmp(Arg[0],"fin")==0 || strcmp(Arg[0],"bye")==0 || strcmp(Arg[0],"salir")==0){

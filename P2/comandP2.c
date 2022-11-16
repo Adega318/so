@@ -322,6 +322,93 @@ bool deallocateAddr(char* Arg[], int numA, tListM* LM, void* hex){
 	}
 }
 
+
+//I-O
+void IO(char* Arg[], int numA, tListM* LM){
+	if(numA>4){
+		if(strcmp(Arg[1], "-read")==0){
+			do_I_O_read(Arg);
+		}else if(strcmp(Arg[1], "-write")==0){
+			do_I_O_write(Arg, numA);
+		}
+	}
+}
+
+//I-O_READ
+void do_I_O_read (char *Arg[]){
+	void *p;
+	size_t cont=-1;
+	ssize_t n;
+	if (Arg[1]==NULL || Arg[2]==NULL){
+		printf ("faltan parametros\n");
+		return;
+	}
+	if(*Arg[3]=='0' && *(Arg[3]+1)=='x') p= (int*)strtol(Arg[3]+2, NULL, 16);
+	else p= (int*)strtol(Arg[3], NULL, 16);
+
+	if (Arg[4]!=NULL) cont=(size_t) atoll(Arg[4]);
+
+	if ((n=LeerFichero(Arg[2],p,cont))==-1) perror ("Imposible leer fichero");
+	else printf ("leidos %lld bytes de %s en %p\n",(long long) n,Arg[2],p);
+}
+
+ssize_t LeerFichero (char *f, void *p, size_t cont){
+   struct stat s;
+   ssize_t  n;  
+   int df,aux;
+
+   if (stat (f,&s)==-1 || (df=open(f,O_RDONLY))==-1)
+	return -1;     
+   if (cont==-1)   /* si pasamos -1 como bytes a leer lo leemos entero*/
+	cont=s.st_size;
+   if ((n=read(df,p,cont))==-1){
+	aux=errno;
+	close(df);
+	errno=aux;
+	return -1;
+   }
+   close (df);
+   return n;
+}
+
+//I-O_WRITE
+void do_I_O_write(char* Arg[], int numA){
+	void* hex;
+	ssize_t size;
+	int desplazamiento=0;
+	if(numA>5 && strcmp(Arg[2], "-o")==0){
+		desplazamiento=1;
+	}
+
+	if(*Arg[3+desplazamiento]=='0' && *(Arg[3+desplazamiento]+1)=='x') hex= (int*)strtol(Arg[3+desplazamiento]+2, NULL, 16);
+	else hex= (int*)strtol(Arg[3+desplazamiento], NULL, 16);
+	size_t cont= (size_t)strtoul(Arg[4+desplazamiento],NULL,10);
+
+	if(size=EscribirFichero(Arg[2+desplazamiento], hex, cont, desplazamiento)==-1) printf("error de escritura\n");
+	else printf("escritos %lld bytes de %s en %p\n", (long long)size, Arg[2+desplazamiento], hex);
+}
+
+ssize_t EscribirFichero (char *f, void *p, size_t cont, int overwrite){
+	ssize_t  n;
+	int df,aux, flags=O_CREAT | O_EXCL | O_WRONLY;
+
+	if (overwrite)
+		flags=O_CREAT | O_WRONLY | O_TRUNC;
+
+	if ((df=open(f,flags,0777))==-1)
+		return -1;
+
+	n=write(df,p,cont);
+	if (n==-1){
+		aux=errno;
+		close(df);
+		errno=aux;
+		return -1;
+	}
+	close (df);
+	return n;
+}
+
 //MEMORY
 void memory(char* Arg[], int numA, tListM LM){
 	bool blocks=0, funcs=0, vars=0, pmap=0;
