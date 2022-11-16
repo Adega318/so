@@ -36,10 +36,11 @@ void allocate(char* Arg[], int numA, tListM *bloquesMem){
 			printf("%s ", argChop);
 		}
 		printf("para el proceso %d\n", getpid());
-		printType(argChop, bloquesMem);
+		printType(argChop, *bloquesMem);
 	}
 }
 
+//ALLOCATE_MALLOC
 bool allocateMalloc(char* Arg[], int numA, tListM* bloquesMem){
 	if(numA==2 || (numA>2 && *Arg[2]=='-')) return 1;
 	else{
@@ -62,6 +63,7 @@ bool allocateMalloc(char* Arg[], int numA, tListM* bloquesMem){
 	}return 0;
 }
 
+//ALLOCATE_SHARED
 bool allocateShared(char* Arg[], int numA, tListM* bloquesMem){
 	if(numA==2 || (numA>2 && *Arg[2]=='-')) return 1;
 	else{
@@ -130,6 +132,7 @@ void* ObtenerMemoriaShmget (key_t clave, size_t tam, tNodeMem* Mnode){
 	return p;
 }
 
+//ALLOCATE_MMAP
 bool allocateMmap (char* Arg[], int numA, tListM* bloquesMem){
 	if(numA==2 || (numA>2 && *Arg[2]=='-') || (numA>3 && *Arg[3]=='-')) { return 1;}
 	else{
@@ -191,13 +194,13 @@ void deallocate(char* Arg[], int numA, tListM *LM){
 		else if(strcmp(Arg[1], "-delkey")==0) modArg.delKey=1;
 		else if(strcmp(Arg[1], "-shared")==0) modArg.shared=1;
 		else if(strcmp(Arg[1], "-mmap")==0) modArg.mmap=1;
-		else if(strcmp(Arg[1], "addr")==0) modArg.addr=1;
-	}
+	}else if(numA>1) modArg.addr=1;
 
 	if(modArg.malloc) standardPlus=deallocateMalloc(Arg, numA, LM);
 	if(modArg.delKey) standardPlus=deallocateKey(Arg, numA, LM);
 	if(modArg.shared) standardPlus=deallocateShared(Arg, numA, LM);
 	if(modArg.mmap) standardPlus=deallocateMmap(Arg, numA, LM);
+	if(modArg.addr) deallocateAddr(Arg, numA, LM, NULL);
 
 	if(numA==1 || standardPlus){
 		printf("******Lista de bloques asignados ");
@@ -206,16 +209,11 @@ void deallocate(char* Arg[], int numA, tListM *LM){
 			printf("%s ", argChop);
 		}
 		printf("para el proceso %d\n", getpid());
-		printType(argChop, LM);
+		printType(argChop, *LM);
 	}
 }
 
-void dealocateType(void* hex, char* type, tListM* LM){
-	if(strcmp(type, "malloc")==0){
-		free(hex);
-	}
-}
-
+//DEALLOCATE_MALLOC
 bool deallocateMalloc(char* Arg[], int numA, tListM* LM){
 	if(numA==2 || (numA>2 && *Arg[2]=='-')) return 1;
 	else{
@@ -226,37 +224,32 @@ bool deallocateMalloc(char* Arg[], int numA, tListM* LM){
 			p=findSizeInType(size, Arg[1]+1, *LM);
 			if(p!=NULL){
 				q=getDataM(p, *LM);
-				dealocateType(q.hex, "malloc", LM);
+				free(q.hex);
 				delPos(p, LM);
 			}else printf("No hay bloque de ese tamano asignado con malloc\n");
 		}
 	}return 0;
 }
 
+//DEALLOCATE_SHARED
 bool deallocateShared(char* Arg[], int numA, tListM* LM){
 	if(numA==2 || (numA>2 && *Arg[2]=='-')) return 1;
 	else{
-		tPosLM p=NULL, p2;
+		tPosLM p=NULL;
 		tNodeMem q;
-		bool exists=false;
 		key_t clave= (key_t)  strtoul(Arg[2],NULL,10);
-		do{
-			p=finkey(clave, *LM);
-			if(p!=NULL){
-				p2=nextM(p, *LM);
-				exists=true;
-				q= getDataM(p, *LM);
-				if(shmdt(q.hex)==-1) perror("error");
-				else delPos(p, LM);
-				p=p2;
-			}
-			
-		}while(p!=NULL);
-		if(!exists) printf("No hay bloque de esa clave mapeado en el proceso\n");
+
+		p=finkey(clave, *LM);
+		if(p!=NULL){
+			q= getDataM(p, *LM);
+			if(shmdt(q.hex)==-1) perror("error");
+			else delPos(p, LM);
+		}else printf("No hay bloque de esa clave mapeado en el proceso\n");
 		
 	}return 0;
 }
 
+//DEALLOCATE_KEY
 bool deallocateKey(char* Arg[], int numA, tListM* LM){
 	if(numA==2 || (numA>2 && *Arg[2]=='-')) return 1;
 	else{
@@ -266,21 +259,21 @@ bool deallocateKey(char* Arg[], int numA, tListM* LM){
 }
 
 void do_DeallocateDelkey (char *key){
-key_t clave;
-int id;
+	key_t clave;
+	int id;
 
-if (key==NULL || (clave=(key_t) strtoul(key,NULL,10))==IPC_PRIVATE){
+	if (key==NULL || (clave=(key_t) strtoul(key,NULL,10))==IPC_PRIVATE){
 		printf ("      delkey necesita clave_valida\n");
 		return;
-}
-if ((id=shmget(clave,0,0666))==-1){
+	}
+	if ((id=shmget(clave,0,0666))==-1){
 		perror ("shmget: imposible obtener memoria compartida");
 		return;
-}
-if (shmctl(id,IPC_RMID,NULL)==-1)
-		perror ("shmctl: imposible eliminar memoria compartida\n");
+	}
+	if (shmctl(id,IPC_RMID,NULL)==-1) perror ("shmctl: imposible eliminar memoria compartida\n");
 }
 
+//DEALLOCATE_MMAP
 bool deallocateMmap(char* Arg[], int numA, tListM* LM){
 	if(numA==2 || (numA>2 && *Arg[2]=='-')) return 1;
 	else{
@@ -301,4 +294,89 @@ bool deallocateMmap(char* Arg[], int numA, tListM* LM){
 			}
 		}printf("Fichero %s no mapeado", Arg[2]);
 	}return 0;
+}
+
+//DEALLOCATE_ADDR
+bool deallocateAddr(char* Arg[], int numA, tListM* LM, void* hex){
+	if(numA>1 || numA==-1){
+		if(numA>1){
+			if(*Arg[1]=='0' && *(Arg[1]+1)=='x') hex= (int*)strtol(Arg[1]+2, NULL, 16);
+			else hex= (int*)strtol(Arg[1], NULL, 16);
+		}
+		tPosLM p=findHex(hex, *LM);
+		tNodeMem d;
+		
+		if(p!=NULL){
+			d=getDataM(p, *LM);
+			if(strcmp(d.tipoMem, "malloc")==0){
+				free(d.hex);
+				delPos(p, LM);
+			}else if(strcmp(d.tipoMem, "shared")==0){
+				if(shmdt(d.hex)==-1) perror("error");
+				else delPos(p, LM);
+			}else{
+				munmap(d.hex, d.space);
+				delPos(p, LM);
+			}
+		}else printf("Direccion %s no asignada con malloc, shared o mmap\n", Arg[1]);
+	}
+}
+
+//MEMORY
+void memory(char* Arg[], int numA, tListM LM){
+	bool blocks=0, funcs=0, vars=0, pmap=0;
+	if(numA==2){
+		if(strcmp(Arg[1], "-all")==0){
+			blocks=1, funcs=1, vars=1;
+		}else if(strcmp(Arg[1], "-blocks")==0){
+			blocks=1;
+		}else if(strcmp(Arg[1], "-funcs")==0){
+			funcs=1;
+		}else if(strcmp(Arg[1], "-vars")==0){
+			vars=1;
+		}else if(strcmp(Arg[1], "-pmap")==0){
+			pmap=1;
+		}else printf("Parámetro no válido");
+
+		if(vars){
+		}
+		if(funcs){
+		}
+		if(blocks){
+			printf("******Lista de bloques asignados para el proceso %d\n", getpid());
+			printType(NULL, LM);
+		}
+		if(pmap) Do_pmap();
+
+	}else printf("Parámetro no válido");
+}
+
+void Do_pmap (void){
+	pid_t pid;       /*hace el pmap (o equivalente) del proceso actual*/
+	char elpid[32];
+	char *argv[4]={"pmap",elpid,NULL};
+
+	sprintf (elpid,"%d", (int) getpid());
+	if ((pid=fork())==-1){
+		perror ("Imposible crear proceso");
+		return;
+		}
+	if (pid==0){
+		if (execvp(argv[0],argv)==-1)
+			perror("cannot execute pmap (linux, solaris)");
+			
+		argv[0]="procstat"; argv[1]="vm"; argv[2]=elpid; argv[3]=NULL;   
+		if (execvp(argv[0],argv)==-1)/*No hay pmap, probamos procstat FreeBSD */
+			perror("cannot execute procstat (FreeBSD)");
+			
+		argv[0]="procmap",argv[1]=elpid;argv[2]=NULL;    
+				if (execvp(argv[0],argv)==-1)  /*probamos procmap OpenBSD*/
+			perror("cannot execute procmap (OpenBSD)");
+			
+		argv[0]="vmmap"; argv[1]="-interleave"; argv[2]=elpid;argv[3]=NULL;
+		if (execvp(argv[0],argv)==-1) /*probamos vmmap Mac-OS*/
+			perror("cannot execute vmmap (Mac-OS)");      
+		exit(1);
+	}
+	waitpid (pid,NULL,0);
 }

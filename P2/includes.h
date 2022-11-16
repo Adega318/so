@@ -19,6 +19,7 @@
 #include <sys/stat.h>
 #include <sys/shm.h>
 #include <sys/mman.h>
+#include <sys/wait.h>
 #include <fcntl.h>
 #include <unistd.h>
 #include <limits.h>

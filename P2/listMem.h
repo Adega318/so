@@ -30,6 +30,6 @@ tPosLM finkey(key_t clave, tListM LM);
 bool insertDataM(tNodeMem I, tListM *L);
 void delListM( tListM *L);
 void delPos(tPosLM p, tListM* LM);
-void printType(char* type, tListM* L);
+void printType(char* type, tListM L);
 
 #endif
