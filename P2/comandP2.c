@@ -474,8 +474,13 @@ void memfill(char* Arg[], int numA, tListM LM){
 			printf("aceso fuera de rango en %p\n", hex);
 			return;
 		}
-		LlenarMemoria(hex, cont, (unsigned char)*Arg[3]);
-		printf("Llenando %d bytes de memoria con el byte (%02X) a partir de la direccion %p\n", cont, (unsigned char)*Arg[3], hex);
+		int n=(int)strtoul(Arg[3], NULL, 10);
+		char aux;
+		if(n==0){
+			aux=*Arg[3];
+		}else aux=(char)n; 
+		LlenarMemoria(hex, cont, (unsigned char)aux);
+		printf("Llenando %d bytes de memoria con el byte %c(%02X) a partir de la direccion %p\n", cont, aux, aux, hex);
 	}	
 }
 
