@@ -133,7 +133,7 @@ void printType(char* type, tListM L){
 		if(type==NULL || (strcmp(data.tipoMem, type)==0 || (strcmp(type, "mmap")==0 && strcmp(data.tipoMem, "malloc")!=0 && strcmp(data.tipoMem, "shared")!=0))){
 			time= localtime(&data.creationTime);
 			strftime(fecha, 100,"%b %d %H:%M ", time);
-			printf("      %p              %d %s %s", 
+			printf("\t%014p\t%5d %s %s", 
 			data.hex, data.space, fecha, data.tipoMem);
 			if(strcmp(data.tipoMem, "malloc")!=0)printf(" (%s%d)",strcmp(data.tipoMem, "shared")!=0?"descriptor ":"", data.key);
 			printf("\n");

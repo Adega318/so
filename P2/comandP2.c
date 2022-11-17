@@ -45,11 +45,11 @@ void allocate(char* Arg[], int numA, tListM *bloquesMem){
 bool allocateMalloc(char* Arg[], int numA, tListM* bloquesMem){
 	if(numA==2 || (numA>2 && *Arg[2]=='-')) return 1;
 	else{
-		int size= (int)strtoul(Arg[2],NULL,10);
+		size_t size= (size_t)strtoul(Arg[2],NULL,10);
 		void* hex=NULL;
 		if(size!=ULONG_MAX) hex=malloc(size); else perror("error");
 
-		if(hex==NULL) printf("No se asignan bloques de 0 bytes");
+		if(hex==NULL) printf("Imposible asignar\n");
 		else{
 			tNodeMem data;
 			time_t t;
@@ -293,7 +293,7 @@ bool deallocateMmap(char* Arg[], int numA, tListM* LM){
 				delPos(p, LM);
 				return 0;
 			}
-		}printf("Fichero %s no mapeado", Arg[2]);
+		}printf("Fichero %s no mapeado\n", Arg[2]);
 	}return 0;
 }
 
@@ -349,7 +349,7 @@ void do_I_O_read (char *Arg[]){
 
 	if (Arg[4]!=NULL) cont=(size_t) atoll(Arg[4]);
 
-	if ((n=LeerFichero(Arg[2],p,cont))==-1) perror ("Imposible leer fichero");
+	if ((n=LeerFichero(Arg[2],p,cont))==-1) perror ("Imposible leer fichero\n");
 	else printf ("leidos %lld bytes de %s en %p\n", n,Arg[2],p);
 }
 
@@ -427,6 +427,7 @@ void memdump(char* Arg[], int numA, tListM LM){
 	if(p!=NULL){
 		size_t cont= 25;
 		if(numA!=2) cont= (size_t)strtoul(Arg[2],NULL,10);
+		if(cont==-1) cont=getDataM(p, LM).space;
 
 		printf("Volcando %s bytes desde la direccion %p\n", Arg[2], hex);
 		for(int i=0; i<cont; i++){
@@ -456,6 +457,7 @@ void memfill(char* Arg[], int numA, tListM LM){
 		size_t cont=128;
 		if(numA!=2){
 			cont= (size_t)strtoul(Arg[2],NULL,10);
+			if(cont==-1) cont=getDataM(p, LM).space;
 
 			int n=(int)strtoul(Arg[3], NULL, 10);
 			if(n==0){
@@ -491,7 +493,7 @@ void memory(char* Arg[], int numA, tListM LM){
 			vars=1;
 		}else if(strcmp(Arg[1], "-pmap")==0){
 			pmap=1;
-		}else printf("Parámetro no válido");
+		}else printf("Parámetro no válido\n");
 
 		if(vars){
 			printf("Variables locales\t %p,\t %p,\t %p \n", &blocks, &funcs, &vars);

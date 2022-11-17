@@ -8,7 +8,7 @@
 typedef struct tNodeMem* tPosLM;
 typedef struct tNodeMem{
 	void* hex;
-	int space;
+	size_t space;
 	time_t creationTime;
 	char* tipoMem;
 	int key;
