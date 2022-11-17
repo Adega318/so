@@ -10,7 +10,7 @@ Autores:
 
 
 int main(){
-	int salida=0, numA=0, c;
+	int salida=0, numA=0, c, error=0;
 	char* entrada=malloc(TMALLOC);
 	char* almacenamiento[TROCEO];
 	tList L;

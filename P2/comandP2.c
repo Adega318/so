@@ -327,9 +327,9 @@ bool deallocateAddr(char* Arg[], int numA, tListM* LM, void* hex){
 //I-O
 void IO(char* Arg[], int numA, tListM* LM){
 	if(numA>4){
-		if(strcmp(Arg[1], "-read")==0){
+		if(strcmp(Arg[1], "read")==0){
 			do_I_O_read(Arg);
-		}else if(strcmp(Arg[1], "-write")==0){
+		}else if(strcmp(Arg[1], "write")==0){
 			do_I_O_write(Arg, numA);
 		}
 	}
@@ -414,7 +414,7 @@ ssize_t EscribirFichero (char *f, void *p, size_t cont, int overwrite){
 
 //MEMDUMP
 void memdump(char* Arg[], int numA, tListM LM){
-	if(numA<3){
+	if(numA<3 && numA!=2){
 		printf("faltan argumentos\n");
 		return;
 	}
@@ -423,20 +423,10 @@ void memdump(char* Arg[], int numA, tListM LM){
 	if(*Arg[1]=='0' && *(Arg[1]+1)=='x') hex= (int*)strtol(Arg[1]+2, NULL, 16);
 	else hex= (int*)strtol(Arg[1], NULL, 16);
 
-	size_t cont= (size_t)strtoul(Arg[2],NULL,10);
-
 	tPosLM p= findHex(hex, LM);
-	tNodeMem d;
 	if(p!=NULL){
-		d=getDataM(p, LM);
-		if(cont<=0){
-			printf("lectura de %s bytes no permitida\n", Arg[2]);
-			return;
-		}
-		if(d.space<cont){
-			printf("aceso fuera de rango en %p\n", hex);
-			return;
-		}
+		size_t cont= 25;
+		if(numA!=2) cont= (size_t)strtoul(Arg[2],NULL,10);
 
 		printf("Volcando %s bytes desde la direccion %p\n", Arg[2], hex);
 		for(int i=0; i<cont; i++){
@@ -451,7 +441,7 @@ void memdump(char* Arg[], int numA, tListM LM){
 
 //MEMFILL
 void memfill(char* Arg[], int numA, tListM LM){
-	if(numA<4){
+	if(numA<4 && numA!=2){
 		printf("faltan argumentos\n");
 		return;
 	}
@@ -460,24 +450,22 @@ void memfill(char* Arg[], int numA, tListM LM){
 	if(*Arg[1]=='0' && *(Arg[1]+1)=='x') hex= (int*)strtol(Arg[1]+2, NULL, 16);
 	else hex= (int*)strtol(Arg[1], NULL, 16);
 
-	size_t cont= (size_t)strtoul(Arg[2],NULL,10);
-
 	tPosLM p= findHex(hex, LM);
-	tNodeMem d;
 	if(p!=NULL){
-		d=getDataM(p, LM);
-		if(cont<=0){
-			printf("escritura de %s bytes no permitida\n", Arg[2]);
-			return;
-		}
-		int n=(int)strtoul(Arg[3], NULL, 10);
-		char aux;
-		if(n==0){
-			aux=*Arg[3];
-		}else aux=(char)n; 
+		char aux='A';
+		size_t cont=128;
+		if(numA!=2){
+			cont= (size_t)strtoul(Arg[2],NULL,10);
+
+			int n=(int)strtoul(Arg[3], NULL, 10);
+			if(n==0){
+				aux=*Arg[3];
+			}else aux=(char)n;
+		} 
 		LlenarMemoria(hex, cont, (unsigned char)aux);
 		printf("Llenando %d bytes de memoria con el byte %c(%02X) a partir de la direccion %p\n", cont, aux, aux, hex);
-	}	
+	}
+	
 }
 
 void LlenarMemoria (void *p, size_t cont, unsigned char byte){
