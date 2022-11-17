@@ -156,6 +156,21 @@ void ayuda(char* Arg[], int numA){
         printf("delete name1 name2 ..\tborra ficheros o directorios vacios.\n");
     }else if(strcmp(Arg[1],"deletetee")==0){
         printf("deltree name1 name2 ..\tborra ficheros o directorios no vacios recursivamente.\n");
+    }else if(strcmp(Arg[1],"allocate")==0){
+        printf("allocate [-malloc|-shared|-createshared|-mmap]... Asigna un bloque de memoria\n\t-malloc tam: asigna un bloque malloc de tamaño tam\n\t-createshared cl tam: asigna(creando) el bloque de memoria compartida de clave cl y tamaño tam\n"
+            "\t-shared cl: asigna el bloque de memotia compartida (ya existente) de clave cl\n\t-mmap fich perm: mapea el fichero fich, perm son los permisos\n");
+    }else if(strcmp(Arg[1],"deallocate")==0){
+        printf("deallocate [-malloc|-shared|-delkey|-mmap|addr]..	Desasigna un bloque de memoria\n\t-malloc tam: desasigna el bloque malloc de tamano tam\n"
+        "\t-shared cl: desasigna (desmapea) el bloque de memoria compartida de clave cl\n\t-delkey cl: elimina del sistema (sin desmapear) la clave de memoria cl\n"
+        "\t-delkey cl: elimina del sistema (sin desmapear) la clave de memoria cl\n\t-mmap fich: desmapea el fichero mapeado fich\n\taddr: desasigna el bloque de memoria en la direccion addr\n");
+    }else if(strcmp(Arg[1],"i-o")==0){
+        printf("i-o [read|write] [-o] fiche addr cont \n\tread fich addr cont: Lee cont bytes desde fich a addr\n\twrite [-o] fich addr cont: Escribe cont bytes desde addr a fich. -o para sobreescribir\n"
+        "\t\taddr es una direccion de memoria\n");
+    }else if(strcmp(Arg[1],"memory")==0){
+        printf("memory [-blocks|-funcs|-vars|-all|-pmap] ..	Muestra muestra detalles de la memoria del proceso\n\t-blocks: los bloques de memoria asignados\n"
+        "\t-funcs: las direcciones de las funciones\n\t-vars: las direcciones de las variables\n\t-all: todo\n\t-pmap: muestra la salida del comando pmap(o similar)\n");
+    }else if(strcmp(Arg[1],"recursiva")==0){
+        printf("recursiva [n]	Invoca a la funcion recursiva n veces\n");
     }else {
     	printf("%s comando no encontrado\n", Arg[1]);
     }

@@ -1,6 +1,7 @@
 {
     "files.associations": {
         "includes.h": "c",
-        "grp.h": "c"
+        "grp.h": "c",
+        "sem.h": "c"
     }
 }
