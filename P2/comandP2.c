@@ -470,10 +470,6 @@ void memfill(char* Arg[], int numA, tListM LM){
 			printf("escritura de %s bytes no permitida\n", Arg[2]);
 			return;
 		}
-		if(d.space<cont){
-			printf("aceso fuera de rango en %p\n", hex);
-			return;
-		}
 		int n=(int)strtoul(Arg[3], NULL, 10);
 		char aux;
 		if(n==0){
