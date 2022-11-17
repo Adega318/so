@@ -552,3 +552,19 @@ void Do_pmap (void){
 }
 
 //RECURSIVA
+void recurse(char* Arg[], int numA){
+	if(numA<2){
+		return;
+	}
+	int n= (int)strtoul(Arg[1], 0, 10);
+	Recursiva(n);
+}
+void Recursiva (int n){
+  char automatico[TAMANO];
+  static char estatico[TAMANO];
+
+  printf ("parametro:%3d(%p) array %p, arr estatico %p\n",n,&n,automatico, estatico);
+
+  if (n>0)
+    Recursiva(n-1);
+}

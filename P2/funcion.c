@@ -55,7 +55,7 @@ int procesadoC(char* Arg[], int numA,tList* L, tListM* listMem){
 		}else if(strcmp(Arg[0],"memory")==0){
 			memory(Arg, numA, *listMem);
 		}else if(strcmp(Arg[0],"recurse")==0){
-			//recurse();
+			recurse(Arg, numA);
 		}else if(strcmp(Arg[0],"fin")==0 || strcmp(Arg[0],"bye")==0 || strcmp(Arg[0],"salir")==0){
 			return 1;
 		

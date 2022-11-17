@@ -48,6 +48,7 @@ void memfill(char* Arg[], int numA, tListM LM);
 	void LlenarMemoria (void *p, size_t cont, unsigned char byte);
 void memory(char* Arg[], int numA, tListM LM);
 	void Do_pmap(void);
-void recurse();
+void recurse(char* Arg[], int numA);
+	void Recursiva (int n);
 
 #endif

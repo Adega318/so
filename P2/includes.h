@@ -26,6 +26,6 @@
 
 #define TROCEO 50 //numero maximo de argumentos de entrada
 #define TMALLOC 4090 //tamaño maximo de entrada 
-#define MAX_REC 2048 //tamaño arrays recurse
+#define TAMANO 2048 //tamaño arrays recurse
 
 #endif
