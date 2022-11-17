@@ -475,6 +475,7 @@ void memfill(char* Arg[], int numA, tListM LM){
 			return;
 		}
 		LlenarMemoria(hex, cont, (unsigned char)*Arg[3]);
+		printf("Llenando %d bytes de memoria con el byte (%02X) a partir de la direccion %p\n", cont, (unsigned char)*Arg[3], hex);
 	}	
 }
 
