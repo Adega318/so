@@ -8,6 +8,7 @@ Autores:
 #include "list.h"
 #include "comandP2.h"
 
+
 int main(){
 	int salida=0, numA=0, c;
 	char* entrada=malloc(TMALLOC);

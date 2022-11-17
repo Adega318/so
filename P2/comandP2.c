@@ -1,5 +1,6 @@
 #include "comandP2.h"
 #include "listMem.h"
+int g1=0, g2=0, g3=0;
 
 struct modComMem ModComMemCreate(){
 	struct modComMem modArg;
@@ -349,7 +350,7 @@ void do_I_O_read (char *Arg[]){
 	if (Arg[4]!=NULL) cont=(size_t) atoll(Arg[4]);
 
 	if ((n=LeerFichero(Arg[2],p,cont))==-1) perror ("Imposible leer fichero");
-	else printf ("leidos %lld bytes de %s en %p\n",(long long) n,Arg[2],p);
+	else printf ("leidos %lld bytes de %s en %p\n", n,Arg[2],p);
 }
 
 ssize_t LeerFichero (char *f, void *p, size_t cont){
@@ -384,8 +385,9 @@ void do_I_O_write(char* Arg[], int numA){
 	else hex= (int*)strtol(Arg[3+desplazamiento], NULL, 16);
 	size_t cont= (size_t)strtoul(Arg[4+desplazamiento],NULL,10);
 
-	if(size=EscribirFichero(Arg[2+desplazamiento], hex, cont, desplazamiento)==-1) printf("error de escritura\n");
-	else printf("escritos %lld bytes de %s en %p\n", (long long)size, Arg[2+desplazamiento], hex);
+	size=EscribirFichero(Arg[2+desplazamiento], hex, cont, desplazamiento);
+	if(size==-1) printf("error de escritura\n");
+	else printf("escritos %lld bytes de %s en %p\n", size, Arg[2+desplazamiento], hex);
 }
 
 ssize_t EscribirFichero (char *f, void *p, size_t cont, int overwrite){
@@ -409,9 +411,85 @@ ssize_t EscribirFichero (char *f, void *p, size_t cont, int overwrite){
 	return n;
 }
 
+
+//MEMDUMP
+void memdump(char* Arg[], int numA, tListM LM){
+	if(numA<3){
+		printf("faltan argumentos\n");
+		return;
+	}
+
+	void* hex;
+	if(*Arg[1]=='0' && *(Arg[1]+1)=='x') hex= (int*)strtol(Arg[1]+2, NULL, 16);
+	else hex= (int*)strtol(Arg[1], NULL, 16);
+
+	size_t cont= (size_t)strtoul(Arg[2],NULL,10);
+
+	tPosLM p= findHex(hex, LM);
+	tNodeMem d;
+	if(p!=NULL){
+		d=getDataM(p, LM);
+		if(cont<=0){
+			printf("lectura de %s bytes no permitida\n", Arg[2]);
+			return;
+		}
+		if(d.space<cont){
+			printf("aceso fuera de rango en %p\n", hex);
+			return;
+		}
+
+		printf("Volcando %s bytes desde la direccion %p\n", Arg[2], hex);
+		for(int i=0; i<cont; i++){
+			printf("%c  ", *(char*)(hex+i));
+		}printf("\n");
+		for(int i=0; i<cont; i++){
+			printf("%02X ", *(char*)(hex+i));
+		}printf("\n");
+	}
+}
+
+
+//MEMFILL
+void memfill(char* Arg[], int numA, tListM LM){
+	if(numA<4){
+		printf("faltan argumentos\n");
+		return;
+	}
+
+	void* hex;
+	if(*Arg[1]=='0' && *(Arg[1]+1)=='x') hex= (int*)strtol(Arg[1]+2, NULL, 16);
+	else hex= (int*)strtol(Arg[1], NULL, 16);
+
+	size_t cont= (size_t)strtoul(Arg[2],NULL,10);
+
+	tPosLM p= findHex(hex, LM);
+	tNodeMem d;
+	if(p!=NULL){
+		d=getDataM(p, LM);
+		if(cont<=0){
+			printf("escritura de %s bytes no permitida\n", Arg[2]);
+			return;
+		}
+		if(d.space<cont){
+			printf("aceso fuera de rango en %p\n", hex);
+			return;
+		}
+		LlenarMemoria(hex, cont, (unsigned char)*Arg[3]);
+	}	
+}
+
+void LlenarMemoria (void *p, size_t cont, unsigned char byte){
+	unsigned char *arr=(unsigned char *) p;
+	size_t i;
+
+	for (i=0; i<cont;i++) arr[i]=byte;
+}
+
+
 //MEMORY
 void memory(char* Arg[], int numA, tListM LM){
 	bool blocks=0, funcs=0, vars=0, pmap=0;
+	int static static1 = 1, static2 = 2, static3 = 3;
 	if(numA==2){
 		if(strcmp(Arg[1], "-all")==0){
 			blocks=1, funcs=1, vars=1;
@@ -426,8 +504,13 @@ void memory(char* Arg[], int numA, tListM LM){
 		}else printf("Parámetro no válido");
 
 		if(vars){
+			printf("Variables locales\t %p,\t %p,\t %p \n", &blocks, &funcs, &vars);
+        	printf("Variables globales\t %p,\t %p,\t %p \n", &g1, &g2, &g3);
+        	printf("Variables estaticas\t %p,\t %p,\t %p \n", &static1, &static2, &static3);
 		}
 		if(funcs){
+			printf("Funciones programa\t %p,\t %p,\t %p \n", memory, memfill, allocate);
+			printf("Funciones librería\t %p,\t %p,\t %p \n", printf, time, strtoul);
 		}
 		if(blocks){
 			printf("******Lista de bloques asignados para el proceso %d\n", getpid());
@@ -435,7 +518,7 @@ void memory(char* Arg[], int numA, tListM LM){
 		}
 		if(pmap) Do_pmap();
 
-	}else printf("Parámetro no válido");
+	}else printf("Parámetro no válido\n");
 }
 
 void Do_pmap (void){

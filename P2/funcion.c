@@ -48,6 +48,10 @@ int procesadoC(char* Arg[], int numA,tList* L, tListM* listMem){
 			deallocate(Arg, numA, listMem);
 		}else if(strcmp(Arg[0],"i-o")==0){
 			IO(Arg, numA, listMem);
+		}else if(strcmp(Arg[0],"memdump")==0){
+			memdump(Arg, numA, *listMem);
+		}else if(strcmp(Arg[0],"memfill")==0){
+			memfill(Arg, numA, *listMem);
 		}else if(strcmp(Arg[0],"memory")==0){
 			memory(Arg, numA, *listMem);
 		}else if(strcmp(Arg[0],"recurse")==0){
