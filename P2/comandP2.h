@@ -12,12 +12,9 @@ struct modComMem
 	bool mmap;
 	bool delKey;
 	bool addr;
-	bool read;
-	bool o;
 	bool blocks;
 	bool funcs;
 	bool vars;
-	bool all;
 	bool pmap;
 };
 

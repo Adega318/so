@@ -4,15 +4,15 @@ int g1=0, g2=0, g3=0;
 
 struct modComMem ModComMemCreate(){
 	struct modComMem modArg;
-	modArg.malloc=0, modArg.createShared=0, modArg.shared=0, modArg.mmap=0, modArg.delKey=0, modArg.addr=0;
-	modArg.read=0, modArg.o=0, modArg.blocks=0, modArg.funcs=0, modArg.vars=0, modArg.all=0;
-	modArg.pmap=0;
+	modArg.malloc=0, modArg.createShared=0, modArg.shared=0, modArg.mmap=0,
+	modArg.delKey=0, modArg.addr=0,
+	modArg.blocks=0, modArg.funcs=0, modArg.vars=0, modArg.pmap=0;
 	return modArg;
 }
 
 
 //ALLOCATE
-void allocate(char* Arg[], int numA, tListM *bloquesMem){
+void allocate(char* Arg[], int numA, tListM *LM){
 	struct modComMem modArg=ModComMemCreate();
 	bool standardPlus=0;
 	char *argChop=NULL;
@@ -25,10 +25,10 @@ void allocate(char* Arg[], int numA, tListM *bloquesMem){
 		else if(strcmp(Arg[1], "-mmap")==0) modArg.mmap=1;
 	}
 
-	if(modArg.malloc) standardPlus=allocateMalloc(Arg, numA, bloquesMem);
-	else if(modArg.shared) standardPlus=allocateShared(Arg, numA, bloquesMem);
-	else if(modArg.createShared) standardPlus=allocateCreateshared(Arg, numA, bloquesMem);
-	else if(modArg.mmap) standardPlus=allocateMmap(Arg, numA, bloquesMem);
+	if(modArg.malloc) standardPlus=allocateMalloc(Arg, numA, LM);
+	else if(modArg.shared) standardPlus=allocateShared(Arg, numA, LM);
+	else if(modArg.createShared) standardPlus=allocateCreateshared(Arg, numA, LM);
+	else if(modArg.mmap) standardPlus=allocateMmap(Arg, numA, LM);
 
 	if(numA==1 || standardPlus){
 		printf("******Lista de bloques asignados ");
@@ -37,12 +37,12 @@ void allocate(char* Arg[], int numA, tListM *bloquesMem){
 			printf("%s ", argChop);
 		}
 		printf("para el proceso %d\n", getpid());
-		printType(argChop, *bloquesMem);
+		printType(argChop, *LM);
 	}
 }
 
 //ALLOCATE_MALLOC
-bool allocateMalloc(char* Arg[], int numA, tListM* bloquesMem){
+bool allocateMalloc(char* Arg[], int numA, tListM* LM){
 	if(numA==2 || (numA>2 && *Arg[2]=='-')) return 1;
 	else{
 		size_t size= (size_t)strtoul(Arg[2],NULL,10);
@@ -58,14 +58,14 @@ bool allocateMalloc(char* Arg[], int numA, tListM* bloquesMem){
 			data.space=size;
 			data.tipoMem=malloc(sizeof("malloc"));
 			strcpy(data.tipoMem, "malloc");
-			insertDataM(data, bloquesMem);
+			insertDataM(data, LM);
 			printf("Asignados %d bytes en %p\n", size, hex);
 		}
 	}return 0;
 }
 
 //ALLOCATE_SHARED
-bool allocateShared(char* Arg[], int numA, tListM* bloquesMem){
+bool allocateShared(char* Arg[], int numA, tListM* LM){
 	if(numA==2 || (numA>2 && *Arg[2]=='-')) return 1;
 	else{
 		tNodeMem data;
@@ -75,13 +75,13 @@ bool allocateShared(char* Arg[], int numA, tListM* bloquesMem){
 		if(hex==NULL)printf("No se asignan bloques de 0 bytes\n");
 		else{
 			data.hex=hex;
-			insertDataM(data, bloquesMem);
+			insertDataM(data, LM);
 			printf("Memoria compartida de clave %lu  en %p\n", (unsigned long) key, data.hex);
 		}
 	}return 0;
 }
 
-bool allocateCreateshared (char* Arg[], int numA, tListM* bloquesMem){
+bool allocateCreateshared (char* Arg[], int numA, tListM* LM){
 	if(numA==2 || (numA>2 && *Arg[2]=='-') || (numA>3 && *Arg[3]=='-')) return 1;
 	else {
 		key_t cl;
@@ -97,7 +97,7 @@ bool allocateCreateshared (char* Arg[], int numA, tListM* bloquesMem){
 		tNodeMem data;
 		hex=ObtenerMemoriaShmget(cl,size, &data);
 		if ((hex!=NULL)){
-			insertDataM(data, bloquesMem);
+			insertDataM(data, LM);
 			printf ("Asignados %lu bytes en %p\n",(unsigned long) size, data.hex);
 		}
 		else printf ("Imposible asignar memoria compartida clave %lu:%s\n",(unsigned long) cl,strerror(errno));
@@ -475,36 +475,36 @@ void LlenarMemoria (void *p, size_t cont, unsigned char byte){
 
 //MEMORY
 void memory(char* Arg[], int numA, tListM LM){
-	bool blocks=0, funcs=0, vars=0, pmap=0;
+	struct modComMem modArg=ModComMemCreate();
 	int static static1 = 1, static2 = 2, static3 = 3;
 	if(numA==2){
 		if(strcmp(Arg[1], "-all")==0){
-			blocks=1, funcs=1, vars=1;
+			modArg.blocks=1, modArg.funcs=1, modArg.vars=1;
 		}else if(strcmp(Arg[1], "-blocks")==0){
-			blocks=1;
+			modArg.blocks=1;
 		}else if(strcmp(Arg[1], "-funcs")==0){
-			funcs=1;
+			modArg.funcs=1;
 		}else if(strcmp(Arg[1], "-vars")==0){
-			vars=1;
+			modArg.vars=1;
 		}else if(strcmp(Arg[1], "-pmap")==0){
-			pmap=1;
+			modArg.pmap=1;
 		}else printf("Parámetro no válido\n");
-	}else blocks=1, funcs=1, vars=1;
+	}else modArg.blocks=1, modArg.funcs=1, modArg.vars=1;
 
-	if(vars){
-		printf("Variables locales    %014p, %014p, %014p \n", &blocks, &funcs, &vars);
+	if(modArg.vars){
+		printf("Variables locales    %014p, %014p, %014p \n", &modArg.blocks, &modArg.funcs, &modArg.vars);
 		printf("Variables globales   %014p, %014p, %014p \n", &g1, &g2, &g3);
 		printf("Variables estaticas  %014p, %014p, %014p \n", &static1, &static2, &static3);
 	}
-	if(funcs){
+	if(modArg.funcs){
 		printf("Funciones programa   %014p, %014p, %014p \n", memory, memfill, allocate);
 		printf("Funciones librería   %014p, %014p, %014p \n", printf, time, strtoul);
 	}
-	if(blocks){
+	if(modArg.blocks){
 		printf("******Lista de bloques asignados para el proceso %d\n", getpid());
 		printType(NULL, LM);
 	}
-	if(pmap) Do_pmap();
+	if(modArg.pmap) Do_pmap();
 }
 
 void Do_pmap (void){
