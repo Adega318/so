@@ -422,21 +422,18 @@ void memdump(char* Arg[], int numA, tListM LM){
 	void* hex;
 	if(*Arg[1]=='0' && *(Arg[1]+1)=='x') hex= (int*)strtol(Arg[1]+2, NULL, 16);
 	else hex= (int*)strtol(Arg[1], NULL, 16);
+	
+	size_t cont= 25;
+	if(numA!=2) cont= (size_t)strtoul(Arg[2],NULL,10);
 
-	tPosLM p= findHex(hex, LM);
-	if(p!=NULL){
-		size_t cont= 25;
-		if(numA!=2) cont= (size_t)strtoul(Arg[2],NULL,10);
-		if(cont==-1) cont=getDataM(p, LM).space;
-
-		printf("Volcando %s bytes desde la direccion %p\n", Arg[2], hex);
-		for(int i=0; i<cont; i++){
-			printf("%c  ", *(char*)(hex+i));
-		}printf("\n");
-		for(int i=0; i<cont; i++){
-			printf("%02X ", *(char*)(hex+i));
-		}printf("\n");
-	}
+	printf("Volcando %s bytes desde la direccion %p\n", Arg[2], hex);
+	for(int i=0; i<cont; i++){
+		printf("%c  ", *(char*)(hex+i));
+	}printf("\n");
+	for(int i=0; i<cont; i++){
+		printf("%02X ", *(char*)(hex+i));
+	}printf("\n");
+	
 }
 
 
@@ -451,22 +448,20 @@ void memfill(char* Arg[], int numA, tListM LM){
 	if(*Arg[1]=='0' && *(Arg[1]+1)=='x') hex= (int*)strtol(Arg[1]+2, NULL, 16);
 	else hex= (int*)strtol(Arg[1], NULL, 16);
 
-	tPosLM p= findHex(hex, LM);
-	if(p!=NULL){
-		char aux='A';
-		size_t cont=128;
-		if(numA!=2){
-			cont= (size_t)strtoul(Arg[2],NULL,10);
-			if(cont==-1) cont=getDataM(p, LM).space;
+	
+	char aux='A';
+	size_t cont=128;
+	if(numA!=2){
+		cont= (size_t)strtoul(Arg[2],NULL,10);
 
-			int n=(int)strtoul(Arg[3], NULL, 10);
-			if(n==0){
-				aux=*Arg[3];
-			}else aux=(char)n;
-		} 
-		LlenarMemoria(hex, cont, (unsigned char)aux);
-		printf("Llenando %d bytes de memoria con el byte %c(%02X) a partir de la direccion %p\n", cont, aux, aux, hex);
-	}
+		int n=(int)strtoul(Arg[3], NULL, 10);
+		if(n==0){
+			aux=*Arg[3];
+		}else aux=(char)n;
+	} 
+	LlenarMemoria(hex, cont, (unsigned char)aux);
+	printf("Llenando %d bytes de memoria con el byte %c(%02X) a partir de la direccion %p\n", cont, aux, aux, hex);
+	
 	
 }
 
