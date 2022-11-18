@@ -489,23 +489,22 @@ void memory(char* Arg[], int numA, tListM LM){
 		}else if(strcmp(Arg[1], "-pmap")==0){
 			pmap=1;
 		}else printf("Parámetro no válido\n");
+	}else blocks=1, funcs=1, vars=1;
 
-		if(vars){
-			printf("Variables locales\t %p,\t %p,\t %p \n", &blocks, &funcs, &vars);
-        	printf("Variables globales\t %p,\t %p,\t %p \n", &g1, &g2, &g3);
-        	printf("Variables estaticas\t %p,\t %p,\t %p \n", &static1, &static2, &static3);
-		}
-		if(funcs){
-			printf("Funciones programa\t %p,\t %p,\t %p \n", memory, memfill, allocate);
-			printf("Funciones librería\t %p,\t %p,\t %p \n", printf, time, strtoul);
-		}
-		if(blocks){
-			printf("******Lista de bloques asignados para el proceso %d\n", getpid());
-			printType(NULL, LM);
-		}
-		if(pmap) Do_pmap();
-
-	}else printf("Parámetro no válido\n");
+	if(vars){
+		printf("Variables locales    %014p, %014p, %014p \n", &blocks, &funcs, &vars);
+		printf("Variables globales   %014p, %014p, %014p \n", &g1, &g2, &g3);
+		printf("Variables estaticas  %014p, %014p, %014p \n", &static1, &static2, &static3);
+	}
+	if(funcs){
+		printf("Funciones programa   %014p, %014p, %014p \n", memory, memfill, allocate);
+		printf("Funciones librería   %014p, %014p, %014p \n", printf, time, strtoul);
+	}
+	if(blocks){
+		printf("******Lista de bloques asignados para el proceso %d\n", getpid());
+		printType(NULL, LM);
+	}
+	if(pmap) Do_pmap();
 }
 
 void Do_pmap (void){
