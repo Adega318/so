@@ -59,11 +59,15 @@ int procesadoC(char* Arg[], int numA,tList* L, tListM* listMem){
 			recurse(Arg, numA);
 		}else if(strcmp(Arg[0],"priority")==0){
 			priority(Arg, numA);
+<<<<<<< HEAD
 		}else if(strcmp(Arg[0],"fork")==0){
 			forkShell();
+=======
+		}else if(strcmp(Arg[0],"showvar")==0){
+			showvar(Arg, numA);	
+>>>>>>> 62923c5 (	modified:   P3/comandP0.c)
 		}else if(strcmp(Arg[0],"fin")==0 || strcmp(Arg[0],"bye")==0 || strcmp(Arg[0],"salir")==0){
 			return 1;
-		
 		}else printf("error: comando no reconozido\n");
 	}
 	
