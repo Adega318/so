@@ -19,3 +19,12 @@ void priority(char* Arg[], int numA){
         }else printf("Prioridad del proceso %d es %d\n", (int)who, value);
     }
 }
+
+void forkShell(){
+	pid_t pid;
+	if ((pid=fork())==0){
+/*		VaciarListaProcesos(&LP); Depende de la implementación de cada uno*/
+		printf ("ejecutando proceso %d\n", getpid());
+	}else if (pid!=-1) waitpid (pid,NULL,0);
+    else perror("error");
+}
