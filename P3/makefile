@@ -17,7 +17,7 @@ comandP1.o: comandP1.c comandP1.h
 comandP2.o: comandP2.c comandP2.h
 	gcc -c comandP2.c -g
 
-comandP2.o: comandP3.c comandP3.h
+comandP3.o: comandP3.c comandP3.h
 	gcc -c comandP3.c -g
 
 funcion.o: funcion.c funcion.h

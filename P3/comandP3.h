@@ -3,7 +3,7 @@
 
 #include "includes.h"
 
-void priority();
+void priority(char* [], int);
 void showvar();
 void changevar();
 void showenv();

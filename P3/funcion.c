@@ -2,6 +2,7 @@
 #include "comandP0.h"
 #include "comandP1.h"
 #include "comandP2.h"
+#include "comandP3.h"
 
 //Troceado de la cadena
 int trocear(char *entrada, char* salida[]){
@@ -56,6 +57,8 @@ int procesadoC(char* Arg[], int numA,tList* L, tListM* listMem){
 			memory(Arg, numA, *listMem);
 		}else if(strcmp(Arg[0],"recurse")==0){
 			recurse(Arg, numA);
+		}else if(strcmp(Arg[0],"priority")==0){
+			priority(Arg, numA);
 		}else if(strcmp(Arg[0],"fin")==0 || strcmp(Arg[0],"bye")==0 || strcmp(Arg[0],"salir")==0){
 			return 1;
 		
