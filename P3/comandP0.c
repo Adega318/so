@@ -131,7 +131,7 @@ void infosis(){
 
 void ayuda(char* Arg[], int numA){
     if(numA==1){
-        printf("Lista de comandos:\n \t- autores\n \t- pid\n \t- carpeta\n \t- fecha\n \t- hist\n \t- comando\n \t- infosis\n \t- ayuda\n \t- create\n \t- stat\n \t- list\n \t- delete\n \t- deletetree\n- allocate\n- deallocate \n- o-o\n- memory\n- recursiva\n");
+        printf("Lista de comandos:\n \t- autores\n \t- pid\n \t- carpeta\n \t- fecha\n \t- hist\n \t- comando\n \t- infosis\n \t- ayuda\n \t- create\n \t- stat\n \t- list\n \t- delete\n \t- deletetree\n  \t- allocate\n \t- deallocate\n \t- i-o\n \t- memory\n \t- recursiva\n");
     }else if(strcmp(Arg[1],"autores")==0){
         printf("autores [-l|-n]\timprime los nombres de los autores y sus login.\n\t-l: imprime solo los logins.\n\t-n: imprime solo los nombres.\n");
     }else if(strcmp(Arg[1],"pid")==0){
