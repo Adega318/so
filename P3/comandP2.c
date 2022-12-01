@@ -1,5 +1,4 @@
 #include "comandP2.h"
-#include "listMem.h"
 int g1=0, g2=0, g3=0;
 
 struct modComMem ModComMemCreate(){
