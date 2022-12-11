@@ -29,14 +29,57 @@ void forkShell(){
     else perror("error");
 }
 
-/*void execute(char* Arg[], int numA){
-    char* almaaux[TROCEO-1];
-    strcpy(almaaux, Arg+sizeof(Arg[0]));
+void execute(char* Arg[], int numA){
+    int i=1;
+
+    char* envp[TROCEO];
+    char* auxVar, *aux;
+    while(i<=numA-1 && *Arg[i]>='A' && *Arg[i]<='Z'){
+        auxVar=getenv(Arg[i]);
+        if(auxVar!=NULL){
+            strcpy(aux, Arg[i]);
+            strcat(aux, "=");
+            strcat(aux, auxVar);
+            envp[i-1]=aux;
+        }else printf("error: %s not found\n", Arg[1]);
+        i++;
+    }
+    envp[i-1]=NULL;
+
+    int j=0;
+    char* arg[TROCEO];
+    if(i<=numA-1 && *Arg[i]!='@' && *Arg[i]!='&'){
+        arg[j]=Ejecutable(Arg[i]);
+        j++;
+        i++;
+    }else printf("error, program not obtained");
+
+    while(i<=numA-1 && *Arg[i]!='@' && *Arg[i]!='&'){
+        arg[j]=Arg[i];
+        i++;
+        j++;
+    }arg[j]=NULL;
+
+    if(i<=numA-1 && *Arg[i]=='@'){
+		int priority= nice((int)strtoul(Arg[1]+1,NULL,10));
+        if(priority==-1){
+            perror("error");
+        }
+        i++;
+    }
+    if(i<=numA-1 && *Arg[i]=='&'){
+        pid_t pid=fork();
+        if(pid==0){
+            execve(arg[0], arg, envp);
+        }else if(pid>0){
+            wait(NULL);
+        }else perror("error");
+    }else execve(arg[0], arg, envp);
 }
 
 char * Ejecutable (char *s){
-	char path[MAXNAME];
-	static char aux2[MAXNAME];
+	char path[PATH_MAX];
+	static char aux2[PATH_MAX];
 	struct stat st;
 	char *p;
 
@@ -44,14 +87,10 @@ char * Ejecutable (char *s){
 
 	if (s[0]=='/' || !strncmp (s,"./",2) || !strncmp (s,"../",3)) return s;       //is an absolute pathname
 
-	strncpy (path, p, MAXNAME);
+	strncpy (path, p, PATH_MAX);
 	for (p=strtok(path,":"); p!=NULL; p=strtok(NULL,":")){
        sprintf (aux2,"%s/%s",p,s);
 	   if (lstat(aux2,&st)!=-1) return aux2;
 	}
 	return s;
 }
-
-int OurExecvpe(const char *file, char *const argv[], char *const envp[]){
-   return (execve(Ejecutable(file) ,argv, envp));
-}*/
