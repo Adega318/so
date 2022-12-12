@@ -29,20 +29,26 @@ void forkShell(){
     else perror("error");
 }
 
-void execute(char* Arg[], int numA){
-    int i=1;
+void execute(char* Arg[], int numA, bool program){
+    int i;
+    if(program){
+        i=0;
+    }else i=1;
 
     char* envp[TROCEO];
     char* auxVar, *aux;
-    while(i<=numA-1 && *Arg[i]>='A' && *Arg[i]<='Z'){
+    if(numA>1){
         auxVar=getenv(Arg[i]);
-        if(auxVar!=NULL){
-            strcpy(aux, Arg[i]);
-            strcat(aux, "=");
-            strcat(aux, auxVar);
-            envp[i-1]=aux;
-        }else printf("error: %s not found\n", Arg[1]);
-        i++;
+        while(i<=numA-1 && auxVar!=NULL){
+            if(auxVar!=NULL){
+                strcpy(aux, Arg[i]);
+                strcat(aux, "=");
+                strcat(aux, auxVar);
+                envp[i-1]=aux;
+            }else printf("error: %s not found\n", Arg[1]);
+            i++;
+            auxVar=getenv(Arg[i]);
+        }
     }
     envp[i-1]=NULL;
 
@@ -62,9 +68,7 @@ void execute(char* Arg[], int numA){
 
     if(i<=numA-1 && *Arg[i]=='@'){
 		int priority= nice((int)strtoul(Arg[1]+1,NULL,10));
-        if(priority==-1){
-            perror("error");
-        }
+        if(priority==-1) perror("error");
         i++;
     }
     if(i<=numA-1 && *Arg[i]=='&'){
@@ -72,7 +76,14 @@ void execute(char* Arg[], int numA){
         if(pid==0){
             execve(arg[0], arg, envp);
         }else if(pid>0){
-            wait(NULL);
+            //add to job list
+        }else perror("error");
+    }else if(program){
+        pid_t pid=fork();
+        if(pid==0){
+            execve(arg[0], arg, envp);
+        }else if(pid>0){
+            waitpid(pid, NULL, 0);
         }else perror("error");
     }else execve(arg[0], arg, envp);
 }

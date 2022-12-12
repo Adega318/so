@@ -8,7 +8,7 @@ void showvar();
 void changevar();
 void showenv();
 void forkShell();
-void execute(char* [], int);
+void execute(char* [], int, bool);
     char* Ejecutable (char*);
 void listjobs();
 void deljobs();

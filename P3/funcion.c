@@ -62,10 +62,10 @@ int procesadoC(char* Arg[], int numA,tList* L, tListM* listMem){
 		}else if(strcmp(Arg[0],"fork")==0){
 			forkShell();
 		}else if(strcmp(Arg[0],"execute")==0){
-			execute(Arg, numA);
+			execute(Arg, numA, false);
 		}else if(strcmp(Arg[0],"fin")==0 || strcmp(Arg[0],"bye")==0 || strcmp(Arg[0],"salir")==0){
 			return 1;
-		}else printf("error: comando no reconozido\n");
+		}else execute(Arg, numA, true);
 	}
 	
 	return 0;
