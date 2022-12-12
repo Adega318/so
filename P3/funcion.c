@@ -13,7 +13,7 @@ int trocear(char *entrada, char* salida[]){
 }
 
 //Procesado de comandos
-int procesadoC(char* Arg[], int numA,tList* L, tListM* listMem){
+int procesadoC(char* Arg[], int numA,tList* L, tListM* listMem, jobList *jobL){
 	if(numA>0){
 		if(strcmp(Arg[0],"autores")==0){
 			autores(Arg, numA);
@@ -28,7 +28,7 @@ int procesadoC(char* Arg[], int numA,tList* L, tListM* listMem){
 		}else if(strcmp(Arg[0],"comando")==0){
 			if(numA==1){
 				hist(Arg, 1, L);
-			}else comando(Arg, L, listMem);
+			}else comando(Arg, L, listMem, jobL);
 		}else if(strcmp(Arg[0],"infosis")==0){
 			infosis();
 		}else if(strcmp(Arg[0],"ayuda")==0){
@@ -62,10 +62,14 @@ int procesadoC(char* Arg[], int numA,tList* L, tListM* listMem){
 		}else if(strcmp(Arg[0],"fork")==0){
 			forkShell();
 		}else if(strcmp(Arg[0],"execute")==0){
-			execute(Arg, numA, false);
+			execute(Arg, numA, false, jobL);
+		}else if(strcmp(Arg[0],"listjobs")==0){
+			listjobs(*jobL);
+		}else if(strcmp(Arg[0],"deljobs")==0){
+			deljobs(jobL);
 		}else if(strcmp(Arg[0],"fin")==0 || strcmp(Arg[0],"bye")==0 || strcmp(Arg[0],"salir")==0){
 			return 1;
-		}else execute(Arg, numA, true);
+		}else execute(Arg, numA, true, jobL);
 	}
 	
 	return 0;

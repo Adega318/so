@@ -15,17 +15,19 @@ int main(){
 	char* almacenamiento[TROCEO];
 	tList L;
 	tListM LM;
+	jobList jobL;
 	tPosLM p;
 	tNodeMem d;
 	
 	createEmptyList(&L);
 	createEmptyListM(&LM);
+	createJobList(&jobL);
 
 	while(salida==0){
 		printf("--> ");
 		if(scanf("%[^\n]s", entrada)>0) insertData(entrada, &L);
 		numA=trocear(entrada,almacenamiento);
-		salida=procesadoC(almacenamiento,numA, &L, &LM);
+		salida=procesadoC(almacenamiento,numA, &L, &LM, &jobL);
 		strcpy(entrada, "");
 		while((c = getchar()) != '\n' && c != EOF);
 	}
@@ -38,6 +40,7 @@ int main(){
 		p=nextM(p, LM);
 		deallocateAddr(NULL, -1, &LM, d.hex);
 	}
+	emptyJobList(&jobL);
 
 	return 0;
 }

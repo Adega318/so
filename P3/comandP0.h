@@ -11,7 +11,7 @@ void fecha(char* Arg[], int numA);
 void hist(char* Arg[], int numA, tList *L);
 	void mostrarHistN(int n, tList *L);
 	void fullHist(tList L);
-void comando(char* Arg[], tList *L, tListM* LM);
+void comando(char* Arg[], tList *L, tListM* LM, jobList *JL);
 void infosis();
 void ayuda(char* Arg[], int numA);
 

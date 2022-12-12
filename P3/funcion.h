@@ -4,9 +4,10 @@
 #include "includes.h"
 #include "list.h"
 #include "listMem.h"
+#include "comandP3.h"
 
 //Funciones de control
 int trocear(char *entrada, char* salida[]);
-int procesadoC(char* Arg[], int numA, tList* L, tListM* LM);
+int procesadoC(char* [], int, tList*, tListM*, jobList*);
 
 #endif
