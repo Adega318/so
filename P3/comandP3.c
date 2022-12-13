@@ -11,11 +11,23 @@ void createJobList(jobList* L){
 }
 
 void showJob(jobPointer p){
-    printf("%d       %s p=%d", p->PID, p->login, p->priority);
+    int sig;
+    char* signal;
+
+    printf("%d       %s p=%d", p->PID, p->login, getpriority(PRIO_PROCESS, p->PID));
     printf(" %d/%02d/%02d %02d:%02d:%02d ", p->dateAndTime.tm_year+1900, p->dateAndTime.tm_mon+1,
     p->dateAndTime.tm_mday, p->dateAndTime.tm_hour, p->dateAndTime.tm_min, p->dateAndTime.tm_sec);
-    char* signal= strsignal(p->signal);
-    printf("%s (%03d) %s\n", signal, p->signal, p->comand);
+    
+    if(kill(p->PID, 0)==0){
+        signal=malloc(sizeof("ACTIVE"));
+        strcpy(signal, "ACTIVE");
+        sig=0;
+    }else{
+        if(waitpid(p->PID, &sig, WNOHANG)==-1)perror("error");
+        signal=malloc(sizeof(strsignal(sig)));
+        strcpy(signal, strsignal(sig));
+    }
+    printf("%s (%03d) %s\n", signal, sig, p->comand);
     free(signal);
 }
 
@@ -81,32 +93,36 @@ void forkShell(){
 }
 
 void execute(char* Arg[], int numA, bool program, jobList *L){
-    int i, priority=0;
+    int i, priority=-1, j=0;
+    bool env=false;
     if(program){
         i=0;
     }else i=1;
 
     //VAR
+    char* auxVar, *aux, *aux2;
     char* envp[TROCEO];
-    char* auxVar, *aux, *aux2, *aux3=" ";
     if(numA>1){
         auxVar=getenv(Arg[i]);
         while(i<=numA-1 && auxVar!=NULL){
+            env=true;
             if(auxVar!=NULL){
                 strcpy(aux, Arg[i]);
                 strcat(aux, "=");
                 strcat(aux, auxVar);
-                envp[i-1]=aux;
+                envp[j]=aux;
             }else printf("error: %s not found\n", Arg[1]);
             i++;
+            j++;
             auxVar=getenv(Arg[i]);
         }
+        envp[j]=NULL;
     }
-    envp[i-1]=NULL;
+    
 
     //COMAND AND ARGUMENTS
-    int j=0;
     char* arg[TROCEO];
+    j=0;
     if(i<=numA-1 && *Arg[i]!='@' && *Arg[i]!='&'){
         aux=malloc(sizeof(Arg[i]));
         strcpy(aux, Arg[i]);
@@ -137,34 +153,40 @@ void execute(char* Arg[], int numA, bool program, jobList *L){
         pid_t pid=fork();
 
         if(pid==0){
-            if(execve(arg[0], arg, envp)==-1)perror("error");
+            if(env) i=execve(arg[0], arg, envp);
+            else i=execv(arg[0], arg);
+            if(i==-1)perror("error");
         }else if(pid>0){
             if(i<=numA-1 && *Arg[i]=='&'){
-                strcat(aux, " ");
-                strcat(aux, Arg[i]);
                 struct jobNode N;
                 time_t rawtime=time(NULL);
+
+                strcat(aux, " ");
+                strcat(aux, Arg[i]);
+                
                 N.PID=pid;
+
                 N.comand=malloc(sizeof(aux));
                 strcpy(N.comand, aux);
                 free(aux);
-                j=1;
-                while(arg[j]!=NULL){
-                    strcat(N.comand, " ");
-                    strcat(N.comand, arg[j]);
-                    j++;
-                }
+                
                 struct tm *lTime=localtime(&rawtime);
                 N.dateAndTime=*lTime;
-                if(N.priority=getpriority(PRIO_PROCESS, pid)==-1) perror("error");
+                
                 N.signal=kill(pid, 0);
+
                 N.login=malloc(sizeof(getlogin()));
                 strcpy(N.login, getlogin());
+
                 addJob(N, L);
             }else waitpid(pid, NULL, 0);
             
-        }else perror("error");
-    }else if(execve(arg[0], arg, envp)==-1)perror("error");
+        }else perror("error2");
+    }else{
+        if(env) i=execve(arg[0], arg, envp);
+        else i=execv(arg[0], arg);
+        if(i==-1)perror("error");
+    }
 }
 
 //EXECUTE AUX

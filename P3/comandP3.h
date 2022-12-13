@@ -10,7 +10,6 @@ struct jobNode{
     int signal;
     char* comand;
     char* login;
-    int priority;
     jobPointer next;
 };
 typedef jobPointer jobList;
