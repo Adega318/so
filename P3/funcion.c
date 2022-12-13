@@ -60,16 +60,18 @@ int procesadoC(char* Arg[], int numA,tList* L, tListM* listMem, jobList *jobL){
 		}else if(strcmp(Arg[0],"priority")==0){
 			priority(Arg, numA);
 		}else if(strcmp(Arg[0],"fork")==0){
-			forkShell();
+			forkShell(jobL);
 		}else if(strcmp(Arg[0],"execute")==0){
 			execute(Arg, numA, false, jobL);
 		}else if(strcmp(Arg[0],"listjobs")==0){
 			listjobs(*jobL);
 		}else if(strcmp(Arg[0],"deljobs")==0){
 			deljobs(jobL);
+		}else if(strcmp(Arg[0],"job")==0){
+			job(Arg, numA, jobL);
 		}else if(strcmp(Arg[0],"fin")==0 || strcmp(Arg[0],"bye")==0 || strcmp(Arg[0],"salir")==0){
 			return 1;
-		}else execute(Arg, numA, true, jobL);
+		}else return execute(Arg, numA, true, jobL);
 	}
 	
 	return 0;

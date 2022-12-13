@@ -7,7 +7,8 @@ typedef struct jobNode *jobPointer;
 struct jobNode{
     pid_t PID;
     struct tm dateAndTime;
-    int signal;
+    char *signal;
+    int sig;
     char* comand;
     char* login;
     jobPointer next;
@@ -18,18 +19,18 @@ typedef jobPointer jobList;
 void createJobList(jobList*);
 void showJob(jobPointer);
 bool addJob(struct jobNode, jobList*);
-    char *NombreSenal(int);
+jobPointer getJob(pid_t, jobList*);
 bool emptyJobList(jobList*);
 
 void priority(char* [], int);
 void showvar();
 void changevar();
 void showenv();
-void forkShell();
-void execute(char* [], int, bool, jobList*);
+void forkShell(jobList*);
+int execute(char* [], int, bool, jobList*);
     char* Ejecutable (char*);
 void listjobs(jobList);
 void deljobs(jobList*);
-void job();
+void job(char* [], int, jobList*);
 
 #endif
