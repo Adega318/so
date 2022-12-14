@@ -8,6 +8,6 @@
 
 //Funciones de control
 int trocear(char *entrada, char* salida[]);
-int procesadoC(char* [], int, tList*, tListM*, jobList*);
+int procesadoC(char*[], int, char*[], tList*, tListM*, jobList*);
 
 #endif

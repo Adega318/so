@@ -118,6 +118,93 @@ void priority(char* Arg[], int numA){
     }
 }
 
+void showvar(char* Arg[], int numA, char *envp[]){
+    extern char **environ;
+
+    if(numA==1){
+        for(int i=0; environ[i]!=NULL; i++){
+            printf("%p->main arg3[%d]=(%p) %s\n", &environ[i], i, environ[i], environ[i]);
+        }
+    }else{
+        char* var = getenv(Arg[1]);
+        int varpos = BuscarVariable(Arg[1], __environ);
+
+        printf("Con arg3 main %s(%p) @%p\n", __environ[varpos], __environ[varpos], &envp[varpos]);
+        printf("  Con envirom %s(%p) @%p\n", __environ[varpos], __environ[varpos], &__environ[varpos]);
+        printf("    Con getenv %s(%p)\n", var, &var);
+    }
+}
+
+int BuscarVariable (char *var, char *e[]){
+    int pos=0;
+    char aux[TAMANO];
+
+    strcpy (aux,var);
+    strcat (aux,"=");
+
+    while (e[pos]!=NULL)
+        if (!strncmp(e[pos],aux,strlen(aux))) return (pos);
+        else pos++;
+    errno=ENOENT;
+    return(-1);
+}
+
+void changevar(char* Arg[], int numA, char *envp[]){
+    bool argmain, envn, putnv;
+    char *enviroment;
+
+    if(numA>2){
+        if(strcmp(Arg[1],"a")==0){ argmain=true;
+        }else if(strcmp(Arg[1], "-e")==0){ envn=true;
+        }else if(strcmp(Arg[1],"-p")==0) putnv=true;
+
+        if(argmain){
+            CambiarVariable(Arg[2], Arg[3], envp);
+        }else if(envn){
+            CambiarVariable(Arg[2], Arg[3], __environ);
+        }else if(putnv){
+            enviroment=malloc(sizeof(Arg[2])+sizeof("=")+sizeof(Arg[3]));
+            strcat(enviroment,Arg[2]);
+            strcat(enviroment,"=");
+            strcat(enviroment,Arg[3]);
+            putenv(enviroment);
+            free(enviroment);
+        }
+    }else printf("Uso: changevar [-a|-e|-p] var valor\n");
+}
+
+int CambiarVariable(char * var, char * valor, char *e[]){
+  int pos;
+  char *aux;
+   
+  if ((pos=BuscarVariable(var,e))==-1)
+    return(-1);
+ 
+  if ((aux=(char *)malloc(strlen(var)+strlen(valor)+2))==NULL)
+	return -1;
+  strcpy(aux,var);
+  strcat(aux,"=");
+  strcat(aux,valor);
+  e[pos]=aux;
+  return (pos);
+}
+
+void showenv(char *Arg[], int numA, char *envp[]){
+    extern char **environ;
+    if(numA==1){
+        showvar(NULL, 1, NULL);
+    }else if(numA==2){
+        if(strcmp(Arg[1], "-environ")==0){
+            for(int i=0; __environ[i]!=NULL; i++){
+                printf("%p->environ[%d]=(%p) %s\n", &envp[i], i, envp[i], envp[i]);
+            }
+        }else if(strcmp(Arg[1], "-addr")==0){
+            printf("environ:   %p (almacenado en %p)\n", &__environ[0], &__environ);
+            printf("main arg3: %p (almacenado en %p)\n", &envp[0], &envp);
+        }
+    }else printf("Uso: showenv [-environ|-addr]\n");
+}
+
 void forkShell(jobList *L){
 	pid_t pid;
 	if ((pid=fork())==0){

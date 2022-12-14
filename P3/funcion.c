@@ -13,7 +13,7 @@ int trocear(char *entrada, char* salida[]){
 }
 
 //Procesado de comandos
-int procesadoC(char* Arg[], int numA,tList* L, tListM* listMem, jobList *jobL){
+int procesadoC(char* Arg[], int numA, char* envp[], tList* L, tListM* listMem, jobList *jobL){
 	if(numA>0){
 		if(strcmp(Arg[0],"autores")==0){
 			autores(Arg, numA);
@@ -59,6 +59,10 @@ int procesadoC(char* Arg[], int numA,tList* L, tListM* listMem, jobList *jobL){
 			recurse(Arg, numA);
 		}else if(strcmp(Arg[0],"priority")==0){
 			priority(Arg, numA);
+		}else if(strcmp(Arg[0],"showvar")==0){
+			showvar(Arg, numA, envp);
+		}else if(strcmp(Arg[0],"showenv")==0){
+			showenv(Arg, numA, envp);
 		}else if(strcmp(Arg[0],"fork")==0){
 			forkShell(jobL);
 		}else if(strcmp(Arg[0],"execute")==0){

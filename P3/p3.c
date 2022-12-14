@@ -9,7 +9,7 @@ Autores:
 #include "comandP2.h"
 
 
-int main(){
+int main(int argc, char *argv[], char *envp[]){
 	int salida=0, numA=0, c, error=0;
 	char* entrada=malloc(TMALLOC);
 	char* almacenamiento[TROCEO];
@@ -27,7 +27,7 @@ int main(){
 		printf("--> ");
 		if(scanf("%[^\n]s", entrada)>0) insertData(entrada, &L);
 		numA=trocear(entrada,almacenamiento);
-		salida=procesadoC(almacenamiento,numA, &L, &LM, &jobL);
+		salida=procesadoC(almacenamiento,numA, envp, &L, &LM, &jobL);
 		strcpy(entrada, "");
 		while((c = getchar()) != '\n' && c != EOF);
 	}

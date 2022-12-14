@@ -23,10 +23,12 @@ jobPointer getJob(pid_t, jobList*);
 bool delJob(jobPointer, jobList*);
 bool emptyJobList(jobList*);
 
-void priority(char* [], int);
-void showvar();
-void changevar();
-void showenv();
+void priority(char *[], int);
+void showvar(char *[], int, char *[]);
+    int BuscarVariable (char *, char *[]);
+void changevar(char *[], int, char *[]);
+    int CambiarVariable(char *, char *, char *[]);
+void showenv(char *[], int, char *[]);
 void forkShell(jobList*);
 int execute(char* [], int, bool, jobList*);
     char* Ejecutable (char*);
