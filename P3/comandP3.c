@@ -131,8 +131,7 @@ int execute(char* Arg[], int numA, bool program, jobList *L){
                 strcat(aux, auxVar);
                 envp[j]=strdup(aux);
             }else printf("error: %s not found\n", Arg[1]);
-            i++;
-            j++;
+            i++, j++;
             auxVar=getenv(Arg[i]);
         }
         envp[j]=NULL;
@@ -147,16 +146,14 @@ int execute(char* Arg[], int numA, bool program, jobList *L){
         free(aux2);
         strcat(aux, Arg[i]);
         arg[j]=Ejecutable(Arg[i]);
-        j++;
-        i++;
+        j++, i++;
     }else printf("error, program not obtained");
 
     while(i<=numA-1 && *Arg[i]!='@' && *Arg[i]!='&'){
         strcat(aux, " ");
         strcat(aux, Arg[i]);
         arg[j]=Arg[i];
-        i++;
-        j++;
+        i++, j++;
     }arg[j]=NULL;
 
     //PRIORITY
@@ -187,7 +184,6 @@ int execute(char* Arg[], int numA, bool program, jobList *L){
                 strcat(aux, Arg[i]);
                 
                 N.PID=pid;
-
 
                 N.comand=strdup(aux);
                 
@@ -262,9 +258,14 @@ void job(char *Arg[], int numA, jobList *L){
         i=1;
         job=true;
     }
+    if(numA==1){
+        listjobs(*L);
+        return;
+    }
     pid_t PID=(pid_t)strtoul(Arg[i],NULL,10);
+    jobPointer p=getJob(PID, L);
+    if(p==NULL) return;
     if(fg){
-        jobPointer p=getJob(PID, L);
         if(waitpid(p->PID, &sig, 0)==p->PID){
             free(p->signal);
             if(WIFEXITED(sig)){
@@ -283,7 +284,7 @@ void job(char *Arg[], int numA, jobList *L){
         }
         printf("Proceso %d terminado terminado normalmente. Valor devuelto %d\n", PID, sig);
     }else if(job){
-        showJob(getJob(PID, L));
+        showJob(p);
     }
 
 }
