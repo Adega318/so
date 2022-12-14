@@ -20,6 +20,7 @@ void createJobList(jobList*);
 void showJob(jobPointer);
 bool addJob(struct jobNode, jobList*);
 jobPointer getJob(pid_t, jobList*);
+bool delJob(jobPointer, jobList*);
 bool emptyJobList(jobList*);
 
 void priority(char* [], int);
@@ -30,7 +31,7 @@ void forkShell(jobList*);
 int execute(char* [], int, bool, jobList*);
     char* Ejecutable (char*);
 void listjobs(jobList);
-void deljobs(jobList*);
+void deljobs(char* [], int, jobList*);
 void job(char* [], int, jobList*);
 
 #endif

@@ -16,7 +16,7 @@ void showJob(jobPointer p){
     if(waitpid(p->PID, &sig, WNOHANG | WUNTRACED | WCONTINUED)==p->PID){
         free(p->signal);
         if(WIFEXITED(sig)){
-            p->signal=strdup("FINISHED");
+            p->signal=strdup("TERMINATED");
             p->sig=WEXITSTATUS(sig);
         }else if(WIFSIGNALED(sig)){
             p->signal=strdup("SIGNALED");
@@ -63,6 +63,25 @@ jobPointer getJob(pid_t PID, jobList *L){
     
 }
 
+bool delJob(jobPointer p, jobList *L){
+    jobPointer q=*L;
+    if(q==NULL)return false;
+
+    if(q!=p)while(q->next!=NULL && q->next!=p){
+        q=q->next;
+    }
+    if(q->next!=NULL){
+        if(q==p) *L=p->next;
+        else q->next=p->next;
+        
+        free(p->comand);
+        free(p->login);
+        free(p->signal);
+        free(p);
+        return true;
+    }else return false;
+}
+
 bool emptyJobList(jobList *L){
     jobPointer p,q;
     q=*L;
@@ -74,6 +93,7 @@ bool emptyJobList(jobList *L){
         free(q);
         q=p;
     }
+    *L=NULL;
 }
 
 
@@ -243,8 +263,55 @@ void listjobs(jobList L){
     }
 }
 
-void deljobs(jobList *L){
-    emptyJobList(L);
+void deljobs(char *Arg[], int numA, jobList *L){
+    bool term=false, signal=false;
+    jobPointer p, q;
+    int i=1, sig;
+    if(i<numA && strcmp(Arg[i], "-term")==0){
+        term=true;
+        i++;
+    }
+    if(i<numA && strcmp(Arg[i], "-sig")==0){
+        signal=true;
+        i++;
+    }
+
+    if(term || signal){
+        p=*L;
+        while(p!=NULL){
+            q=p->next;
+            if(waitpid(p->PID, &sig, WNOHANG | WUNTRACED | WCONTINUED)==p->PID){
+                free(p->signal);
+                if(WIFEXITED(sig)){
+                    p->signal=strdup("TERMINATED");
+                    p->sig=WEXITSTATUS(sig);
+                }else if(WIFSIGNALED(sig)){
+                    p->signal=strdup("SIGNALED");
+                    p->sig=WTERMSIG(sig);
+                }else if(WIFSTOPPED(sig)){
+                    p->signal=strdup("STOPED");
+                    p->sig=WSTOPSIG(sig);
+                }else if(WIFCONTINUED(sig)){
+                    p->signal=strdup("ACTIVE");
+                    p->sig=0;
+                }
+            }
+            if(term){
+                if(strcmp(p->signal, "TERMINATED")==0){
+                    showJob(p);
+                    delJob(p, L);
+                }
+                
+            }else if(strcmp(p->signal, "SIGNALED")==0){
+                showJob(p);
+                delJob(p, L);
+            }
+            p=q;
+        }
+    }else{
+        listjobs(*L);
+        emptyJobList(L);
+    }
 }
 
 void job(char *Arg[], int numA, jobList *L){
@@ -269,7 +336,7 @@ void job(char *Arg[], int numA, jobList *L){
         if(waitpid(p->PID, &sig, 0)==p->PID){
             free(p->signal);
             if(WIFEXITED(sig)){
-                p->signal=strdup("FINISHED");
+                p->signal=strdup("TERMINATED");
                 p->sig=WEXITSTATUS(sig);
             }else if(WIFSIGNALED(sig)){
                 p->signal=strdup("SIGNALED");

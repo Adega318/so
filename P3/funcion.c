@@ -66,7 +66,7 @@ int procesadoC(char* Arg[], int numA,tList* L, tListM* listMem, jobList *jobL){
 		}else if(strcmp(Arg[0],"listjobs")==0){
 			listjobs(*jobL);
 		}else if(strcmp(Arg[0],"deljobs")==0){
-			deljobs(jobL);
+			deljobs(Arg, numA, jobL);
 		}else if(strcmp(Arg[0],"job")==0){
 			job(Arg, numA, jobL);
 		}else if(strcmp(Arg[0],"fin")==0 || strcmp(Arg[0],"bye")==0 || strcmp(Arg[0],"salir")==0){
