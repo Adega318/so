@@ -24,6 +24,7 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <limits.h>
+#include <signal.h>
 
 #define TROCEO 50 //numero maximo de argumentos de entrada
 #define TMALLOC 4090 //tamaño maximo de entrada 

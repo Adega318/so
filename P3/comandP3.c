@@ -29,11 +29,21 @@ void showJob(jobPointer p){
             p->sig=0;
         }
     }
-
+    
     printf("%d       %s p=%d", p->PID, p->login, getpriority(PRIO_PROCESS, p->PID));
     printf(" %d/%02d/%02d %02d:%02d:%02d ", p->dateAndTime.tm_year+1900, p->dateAndTime.tm_mon+1,
     p->dateAndTime.tm_mday, p->dateAndTime.tm_hour, p->dateAndTime.tm_min, p->dateAndTime.tm_sec);
-    printf("%s (%03d) %s\n", p->signal, p->sig, p->comand);
+    printf("%s (%s) %s\n", p->signal, NombreSenal(p->sig), p->comand);
+}
+
+char *NombreSenal(int sen){
+    int i;
+        for (i=0; sigstrnum[i].nombre!=NULL; i++)
+        if (sen==sigstrnum[i].senal) return sigstrnum[i].nombre;
+    if(sen==0){
+        return "000";
+    }
+    return ("SIGUNKNOWN");
 }
 
 bool addJob(struct jobNode N, jobList *L){
@@ -154,7 +164,7 @@ void changevar(char* Arg[], int numA, char *envp[]){
     char *enviroment;
 
     if(numA>2){
-        if(strcmp(Arg[1],"a")==0){ argmain=true;
+        if(strcmp(Arg[1],"-a")==0){ argmain=true;
         }else if(strcmp(Arg[1], "-e")==0){ envn=true;
         }else if(strcmp(Arg[1],"-p")==0) putnv=true;
 
