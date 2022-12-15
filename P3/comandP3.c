@@ -110,7 +110,9 @@ bool emptyJobList(jobList *L){
 }
 
 
-//COMAND P3
+//COMANDS P3
+
+//PRIORITY
 void priority(char* Arg[], int numA){
     int value;
     id_t who;
@@ -131,6 +133,7 @@ void priority(char* Arg[], int numA){
     }
 }
 
+//SHOWVAR
 void showvar(char* Arg[], int numA, char *envp[]){
     extern char **environ;
 
@@ -148,6 +151,7 @@ void showvar(char* Arg[], int numA, char *envp[]){
     }
 }
 
+//SHOWVAR AUX
 int BuscarVariable (char *var, char *e[]){
     int pos=0;
     char aux[TAMANO];
@@ -162,6 +166,7 @@ int BuscarVariable (char *var, char *e[]){
     return(-1);
 }
 
+//CHANGEVAR
 void changevar(char* Arg[], int numA, char *envp[]){
     bool argmain, envn, putnv;
     char *enviroment;
@@ -186,6 +191,7 @@ void changevar(char* Arg[], int numA, char *envp[]){
     }else printf("Uso: changevar [-a|-e|-p] var valor\n");
 }
 
+//CHANGEVAR AUX
 int CambiarVariable(char * var, char * valor, char *e[]){
   int pos;
   char *aux;
@@ -202,6 +208,7 @@ int CambiarVariable(char * var, char * valor, char *e[]){
   return (pos);
 }
 
+//SHOWENV
 void showenv(char *Arg[], int numA, char *envp[]){
     extern char **environ;
     if(numA==1){
@@ -218,6 +225,7 @@ void showenv(char *Arg[], int numA, char *envp[]){
     }else printf("Uso: showenv [-environ|-addr]\n");
 }
 
+//FORK
 void forkShell(jobList *L){
 	pid_t pid;
 	if ((pid=fork())==0){
@@ -227,6 +235,7 @@ void forkShell(jobList *L){
     else perror("error");
 }
 
+//EXECUTE AND ******
 int execute(char* Arg[], int numA, bool program, jobList *L){
     int i, priority=-1, j=0, salida=0;
     bool env=false;
@@ -355,6 +364,7 @@ char * Ejecutable (char *s){
 	return s;
 }
 
+//LISTJOBS
 void listjobs(jobList L){
     jobPointer p=L;
     while (p!=NULL){
@@ -363,6 +373,7 @@ void listjobs(jobList L){
     }
 }
 
+//DELJOBS
 void deljobs(char *Arg[], int numA, jobList *L){
     bool term=false, signal=false;
     jobPointer p, q;
@@ -399,6 +410,7 @@ void deljobs(char *Arg[], int numA, jobList *L){
     }
 }
 
+//JOBS
 void job(char *Arg[], int numA, jobList *L){
     bool fg=false, job=false;
     int i, sig;
