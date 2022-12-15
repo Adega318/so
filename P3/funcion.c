@@ -61,6 +61,8 @@ int procesadoC(char* Arg[], int numA, char* envp[], tList* L, tListM* listMem, j
 			priority(Arg, numA);
 		}else if(strcmp(Arg[0],"showvar")==0){
 			showvar(Arg, numA, envp);
+		}else if(strcmp(Arg[0],"changevar")==0){
+			changevar(Arg, numA, envp);
 		}else if(strcmp(Arg[0],"showenv")==0){
 			showenv(Arg, numA, envp);
 		}else if(strcmp(Arg[0],"fork")==0){
