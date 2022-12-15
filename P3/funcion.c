@@ -28,7 +28,7 @@ int procesadoC(char* Arg[], int numA, char* envp[], tList* L, tListM* listMem, j
 		}else if(strcmp(Arg[0],"comando")==0){
 			if(numA==1){
 				hist(Arg, 1, L);
-			}else comando(Arg, L, listMem, jobL);
+			}else comando(Arg, L, listMem, jobL, envp);
 		}else if(strcmp(Arg[0],"infosis")==0){
 			infosis();
 		}else if(strcmp(Arg[0],"ayuda")==0){
