@@ -10,10 +10,9 @@ void createJobList(jobList* L){
     *L=NULL;
 }
 
-void showJob(jobPointer p){
+void updateSig(jobPointer p){
     int sig;
-
-    if(waitpid(p->PID, &sig, WNOHANG | WUNTRACED | WCONTINUED)==p->PID){
+    if(strcmp(p->signal, "TERMINATED") && waitpid(p->PID, &sig, WNOHANG | WUNTRACED | WCONTINUED)==p->PID){
         free(p->signal);
         if(WIFEXITED(sig)){
             p->signal=strdup("TERMINATED");
@@ -28,7 +27,11 @@ void showJob(jobPointer p){
             p->signal=strdup("ACTIVE");
             p->sig=0;
         }
-    }
+    }   
+}
+
+void showJob(jobPointer p){
+    updateSig(p);
     
     printf("%d       %s p=%d", p->PID, p->login, getpriority(PRIO_PROCESS, p->PID));
     printf(" %d/%02d/%02d %02d:%02d:%02d ", p->dateAndTime.tm_year+1900, p->dateAndTime.tm_mon+1,
@@ -377,22 +380,7 @@ void deljobs(char *Arg[], int numA, jobList *L){
         p=*L;
         while(p!=NULL){
             q=p->next;
-            if(waitpid(p->PID, &sig, WNOHANG | WUNTRACED | WCONTINUED)==p->PID){
-                free(p->signal);
-                if(WIFEXITED(sig)){
-                    p->signal=strdup("TERMINATED");
-                    p->sig=WEXITSTATUS(sig);
-                }else if(WIFSIGNALED(sig)){
-                    p->signal=strdup("SIGNALED");
-                    p->sig=WTERMSIG(sig);
-                }else if(WIFSTOPPED(sig)){
-                    p->signal=strdup("STOPED");
-                    p->sig=WSTOPSIG(sig);
-                }else if(WIFCONTINUED(sig)){
-                    p->signal=strdup("ACTIVE");
-                    p->sig=0;
-                }
-            }
+            updateSig(p);
             if(term){
                 if(strcmp(p->signal, "TERMINATED")==0){
                     showJob(p);
@@ -430,22 +418,7 @@ void job(char *Arg[], int numA, jobList *L){
     jobPointer p=getJob(PID, L);
     if(p==NULL) return;
     if(fg){
-        if(waitpid(p->PID, &sig, 0)==p->PID){
-            free(p->signal);
-            if(WIFEXITED(sig)){
-                p->signal=strdup("TERMINATED");
-                p->sig=WEXITSTATUS(sig);
-            }else if(WIFSIGNALED(sig)){
-                p->signal=strdup("SIGNALED");
-                p->sig=WTERMSIG(sig);
-            }else if(WIFSTOPPED(sig)){
-                p->signal=strdup("STOPED");
-                p->sig=WSTOPSIG(sig);
-            }else if(WIFCONTINUED(sig)){
-                p->signal=strdup("ACTIVE");
-                p->sig=0;
-            }
-        }
+        updateSig(p);
         printf("Proceso %d terminado terminado normalmente. Valor devuelto %d\n", PID, sig);
     }else if(job){
         showJob(p);
