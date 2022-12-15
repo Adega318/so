@@ -171,6 +171,24 @@ void ayuda(char* Arg[], int numA){
         "\t-funcs: las direcciones de las funciones\n\t-vars: las direcciones de las variables\n\t-all: todo\n\t-pmap: muestra la salida del comando pmap(o similar)\n");
     }else if(strcmp(Arg[1],"recursiva")==0){
         printf("recursiva [n]	Invoca a la funcion recursiva n veces\n");
+    }else if(strcmp(Arg[1],"priority")==0){
+        printf("priority [pid] [valor] 	Muestra o cambia la prioridad del proceso pid a valor\n");
+    }else if(strcmp(Arg[1],"showvar")==0){
+        printf("showvar var	Muestra el valor y las direcciones de la variable de entorno var\n");
+    }else if(strcmp(Arg[1],"changevar")==0){
+        printf("changevar [-a|-e|-p] var valor	Cambia el valor de una variable de entorno\n\t-a: accede por el tercer arg de main\n\t-e: accede mediante environ\n\t-p: accede mediante putenv\n");
+    }else if(strcmp(Arg[1],"showenv")==0){
+        printf("showenv [-environ|-addr] 	 Muestra el entorno del proceso\n\t-environ: accede usando environ (en lugar del tercer arg de main)\n\t-addr: muestra el valor y donde se almacenan environ y el 3er arg main\n");
+    }else if(strcmp(Arg[1],"fork")==0){
+        printf("fork 	El shell hace fork y queda en espera a que su hijo termine\n");
+    }else if(strcmp(Arg[1],"execute")==0){
+        printf("execute VAR1 VAR2 ..prog args....[@pri]	Ejecuta, sin crear proceso,prog con argumentos\n\ten un entorno que contiene solo las variables VAR1, VAR2...\n");
+    }else if(strcmp(Arg[1],"listjobs")==0){
+        printf("lisjobs\tLista los procesos en segundo plano\n");
+    }else if(strcmp(Arg[1],"deljobs")==0){
+        printf("deljobs [-term][-sig]	Elimina los procesos de la lista procesos en sp\n\t-term: los terminados\n\t-sig: los terminados por senal\n");
+    }else if(strcmp(Arg[1],"job")==0){
+        printf("job [-fg] pid	Muestra informacion del proceso pid.\n\t-fg: lo pasa a primer plano\n");
     }else {
     	printf("%s comando no encontrado\n", Arg[1]);
     }
